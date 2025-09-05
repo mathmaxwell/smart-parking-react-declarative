@@ -1,0 +1,41 @@
+{
+  "name": "declarative",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/material": "^5.18.0",
+    "mapbox-gl": "^3.14.0",
+    "mobx": "^6.13.7",
+    "mobx-react": "^9.2.0",
+    "pocketbase": "^0.26.2",
+    "react": "^17.0.2",
+    "react-declarative": "^2.7.109",
+    "react-declarative-lite": "^2.7.54",
+    "react-dom": "^17.0.2",
+    "tss-react": "^4.9.19",
+    "uuid": "^11.1.0",
+    "zustand": "^4.5.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.33.0",
+    "@types/react": "^17.0.88",
+    "@types/react-dom": "^17.0.26",
+    "@vitejs/plugin-react": "^5.0.0",
+    "eslint": "^9.33.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.3.0",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.39.1",
+    "vite": "^7.1.2"
+  }
+}
