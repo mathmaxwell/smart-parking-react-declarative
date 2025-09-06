@@ -1,5 +1,8 @@
+import { useLangStore } from '../../language/useTranslationStore'
+
 const CameraSettings = () => {
-	return <div>CameraSettings</div>
+	const { t } = useLangStore()
+	return <div>{t.cameraSettings}</div>
 }
 
 export default CameraSettings
