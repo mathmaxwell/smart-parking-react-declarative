@@ -1,0 +1,17 @@
+export const LOCALE: Record<string, string> = {
+	ADMIN: 'ADMIN',
+	Admin: 'Admin',
+	dashboard: 'dashboard',
+	chooseLanguage: 'choose language',
+	'start date': 'start date',
+	'start time': 'start time',
+	'end date': 'end date',
+	'end time': 'end time',
+	carsInParking: 'cars in parking',
+	tariffs: 'tariffs',
+	cameraSettings: 'camera settings',
+	forToday: 'for today',
+	forAWeek: 'for a week',
+	forAYear: 'for a year',
+	forAMonth: 'for a month',
+}

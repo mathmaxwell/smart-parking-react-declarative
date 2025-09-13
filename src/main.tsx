@@ -3,21 +3,30 @@ import App from './App'
 import { ThemeProvider } from '@mui/material'
 import THEME_DARK from './config/theme'
 import { LoaderProvider } from './hooks/useLoader'
-import { LangProvider } from './language/LangProvider'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ModalProvider } from 'react-declarative'
-const queryClient = new QueryClient()
-ReactDOM.render(
+import { ModalProvider, sleep } from 'react-declarative'
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+
+import './i18n'
+
+const wrappedApp = (
 	<ModalProvider>
-		<LangProvider>
-			<LoaderProvider>
-				<QueryClientProvider client={queryClient}>
-					<ThemeProvider theme={THEME_DARK}>
-						<App />
-					</ThemeProvider>
-				</QueryClientProvider>
-			</LoaderProvider>
-		</LangProvider>
-	</ModalProvider>,
-	document.getElementById('root')
+		<LoaderProvider>
+			<LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='en-gb'>
+				<ThemeProvider theme={THEME_DARK}>
+					<App />
+				</ThemeProvider>
+			</LocalizationProvider>
+		</LoaderProvider>
+	</ModalProvider>
 )
+
+const init = async () => {
+	// @ts-ignore
+	while (!window.Translate) {
+		await sleep(500)
+	}
+	ReactDOM.render(wrappedApp, document.getElementById('root'))
+}
+
+init()

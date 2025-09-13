@@ -1,15 +1,15 @@
 import {
-	Async,
 	ColumnType,
 	FieldType,
 	type IColumn,
 	type TypedField,
 } from 'react-declarative'
 import { pb } from '../../../../pb'
-import type { ICarsInParking } from '../../../types/CarsInParking'
+import type { ICarsInParking, ICarsType } from '../../../types/CarsInParking'
 import { Box, Typography } from '@mui/material'
 import { getDiff } from '../../../functions/carsInParking'
-import { getCarsByType } from '../../../api/carsSessions'
+import { calculateForFree } from './function'
+import type IListOperation from 'react-declarative/model/IListOperation'
 
 export const display_fields: TypedField[] = [
 	{
@@ -51,9 +51,20 @@ export const display_fields: TypedField[] = [
 					</Box>
 				),
 			},
+		],
+	},
+	{
+		type: FieldType.Paper,
+		fields: [
 			{
 				type: FieldType.Component,
 				element: (session: ICarsInParking) => {
+					const row = {
+						isBus: session.isBus,
+						entryTime: session.entryTime,
+						exitTime: session.exitTime,
+					}
+					localStorage.setItem('indormation', JSON.stringify(row))
 					const diffMins =
 						((session?.exitTime
 							? new Date(session.exitTime).getTime()
@@ -74,12 +85,12 @@ export const display_fields: TypedField[] = [
 									gap: 1,
 									alignItems: 'center',
 									justifyContent: 'center',
-									flexWrap: 'wrap', // Allow wrapping for long text
+									flexWrap: 'wrap',
 								}}
 							>
 								<Typography variant='h6'>время входа:</Typography>
 								<Typography variant='body1'>
-									{session.entryTime.toString()}
+									{new Date(session.entryTime).toLocaleString().slice(0, 17)}
 								</Typography>
 							</Box>
 							<Box
@@ -93,7 +104,7 @@ export const display_fields: TypedField[] = [
 							>
 								<Typography variant='h6'>время выхода: </Typography>
 								<Typography variant='body1'>
-									{session.exitTime.toString()}
+									{new Date(session.exitTime).toLocaleString().slice(0, 17)}
 								</Typography>
 							</Box>
 							<Box
@@ -114,61 +125,92 @@ export const display_fields: TypedField[] = [
 					)
 				},
 			},
+		],
+	},
+	{
+		type: FieldType.Paper,
+		fields: [
 			{
 				type: FieldType.Component,
-				element: (session: ICarsInParking) => (
-					<Async payload={session}>
-						{async () => {
-							const result = await getCarsByType('', '', session.plateNumber)
-							console.log('result', result)
-							return <pre>{JSON.stringify(result, null, 2)}</pre>
-						}}
-					</Async>
-				),
-			},
-			{
-				type: FieldType.Component,
-				element: ({ billingInfo }) => (
-					<pre>{JSON.stringify(billingInfo, null, 2)}</pre>
-				),
+				element: ({ billingInfo }: { billingInfo: ICarsType[] }) => {
+					const result = calculateForFree(billingInfo)
+					if (typeof result === 'number') {
+						return (
+							<Typography
+								sx={{ textAlign: 'center' }}
+							>{`должен заплптить ${result} сум`}</Typography>
+						)
+					}
+					if (result.cost === 0) {
+						return (
+							<Typography
+								sx={{ textAlign: 'center' }}
+							>{`у него подписка до ${new Date(result.end_Date)
+								.toLocaleString()
+								.slice(0, 17)}`}</Typography>
+						)
+					} else {
+						if (!result.newSubscription) {
+							return (
+								<Typography
+									sx={{ textAlign: 'center' }}
+								>{`подписка закончилась в ${new Date(result.end_Date)
+									.toLocaleString()
+									.slice(0, 17)} и он должен заплатить ${
+									result.cost
+								} сум`}</Typography>
+							)
+						} else {
+							return (
+								<Typography
+									sx={{ textAlign: 'center' }}
+								>{`У него нет активной подписки, следующая подписка начинается в ${new Date(
+									result.start_Date
+								)
+									.toLocaleString()
+									.slice(0, 17)} и он должен заплатить ${
+									result.cost
+								} сум`}</Typography>
+							)
+						}
+					}
+				},
 			},
 		],
-
-		// compute: (data: ICarsInParking) => JSON.stringify(data.plateNumber),
-		// element: (data: ICarsInParking) => (
-		// 	<img
-		// 		src={pb.files.getURL(data, data.exitPhoto)}
-		// 		alt='entry'
-		// 		height={60}
-		// 		width={60}
-		// 		style={{
-		// 			objectFit: 'cover',
-		// 			boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-		// 		}}
-		// 	/>
-		// ),
 	},
 ]
-export function mergeDateTime(
-	dateStr?: string,
-	timeStr?: string
-): Date | undefined {
-	if (!dateStr) return undefined
-	const date = new Date(dateStr)
-	if (timeStr) {
-		const [hours, minutes] = timeStr.split(':').map(Number)
-		date.setHours(hours, minutes, 0, 0)
-	} else {
-		date.setHours(0, 0, 0, 0)
-	}
+// {
+// 	type: FieldType.Component,
+// 	element: (session: ICarsInParking) => (
+// 		<Async payload={session}>
+// 			{async () => {
+// 				const result = await getCarsByType('', '', session.plateNumber)
+// 				console.log('result', result)
+// 				return <pre>{JSON.stringify(result, null, 2)}</pre>
+// 			}}
+// 		</Async>
+// 	),
+// },
 
-	return date
-}
+// compute: (data: ICarsInParking) => JSON.stringify(data.plateNumber),
+// element: (data: ICarsInParking) => (
+// 	<img
+// 		src={pb.files.getURL(data, data.exitPhoto)}
+// 		alt='entry'
+// 		height={60}
+// 		width={60}
+// 		style={{
+// 			objectFit: 'cover',
+// 			boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+// 		}}
+// 	/>
+// ),
+
 export const columns: IColumn<{}, ICarsInParking>[] = [
 	{
 		type: ColumnType.Component,
 		field: 'plateNumber',
-		headerName: 'plateNumber',
+		headerName: 'номер машины',
 		secondary: false,
 		width: fullWidth => Math.max((fullWidth - 650) / 3, 200),
 		isVisible: () => {
@@ -190,7 +232,7 @@ export const columns: IColumn<{}, ICarsInParking>[] = [
 
 	{
 		type: ColumnType.Compute,
-		headerName: 'entry time',
+		headerName: 'время входа',
 		primary: true,
 		element: ({ entryTime }) => (
 			<Box
@@ -213,7 +255,7 @@ export const columns: IColumn<{}, ICarsInParking>[] = [
 	},
 	{
 		type: ColumnType.Compute,
-		headerName: 'entry photo',
+		headerName: 'фотография входа',
 		primary: true,
 		element: session => (
 			<img
@@ -231,7 +273,7 @@ export const columns: IColumn<{}, ICarsInParking>[] = [
 	},
 	{
 		type: ColumnType.Compute,
-		headerName: 'entry time',
+		headerName: 'время выхода',
 		primary: true,
 		element: ({ exitTime }) => (
 			<Box
@@ -254,7 +296,7 @@ export const columns: IColumn<{}, ICarsInParking>[] = [
 	},
 	{
 		type: ColumnType.Compute,
-		headerName: 'exit photo',
+		headerName: 'фотография выхода',
 		primary: true,
 		element: session => (
 			<img
@@ -272,7 +314,7 @@ export const columns: IColumn<{}, ICarsInParking>[] = [
 	},
 	{
 		type: ColumnType.Component,
-		headerName: 'Component',
+		headerName: 'время',
 		element: session => {
 			return (
 				<Box
@@ -331,5 +373,19 @@ export const filters: TypedField[] = [
 		name: 'endTime',
 		title: 'end time',
 		defaultValue: '23:59',
+	},
+]
+export const operations: IListOperation[] = [
+	{
+		action: 'download',
+		label: 'скачать',
+	},
+	{
+		action: 'delete',
+		label: 'удалить',
+		isAvailable: async row => {
+			console.log(row)
+			return true
+		},
 	},
 ]

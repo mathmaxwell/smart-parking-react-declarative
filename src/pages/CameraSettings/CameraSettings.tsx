@@ -1,8 +1,22 @@
-import { useLangStore } from '../../language/useTranslationStore'
+import { One } from 'react-declarative'
+import { fields } from './view/Fileds'
+import { getCords } from '../../api/cords'
+import { getParkingSessions } from '../../api/carsSessions'
 
 const CameraSettings = () => {
-	const { t } = useLangStore()
-	return <div>{t.cameraSettings}</div>
+	return (
+		<>
+			<One
+				fields={fields}
+				handler={async () => ({
+					photo: {
+						photo: await getParkingSessions(1, 1),
+						cords: await getCords(),
+					},
+				})}
+			/>
+		</>
+	)
 }
 
 export default CameraSettings
