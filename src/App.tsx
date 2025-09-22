@@ -1,4 +1,4 @@
-import { Scaffold2, sleep, Switch, useSearchState } from 'react-declarative'
+import { Scaffold2, Switch, useSearchState } from 'react-declarative'
 import './App.css'
 import history, { useRouteItem } from './helpers/history'
 import sidemenu from './config/siteMenu'

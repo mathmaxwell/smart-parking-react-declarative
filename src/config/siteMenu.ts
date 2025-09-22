@@ -27,6 +27,7 @@ export const sidemenu: IScaffold2Group[] = [
 				id: 'tariffs',
 				icon: PaidIcon,
 			},
+
 			{
 				label: 'cameraSettings',
 				id: 'camera_settings',

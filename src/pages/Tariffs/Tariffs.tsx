@@ -49,6 +49,7 @@ const Tariffs = () => {
 		},
 		submitLabel: 'СОХРАНИТЬ',
 	})
+
 	return (
 		<>
 			<ListTyped<
@@ -63,26 +64,27 @@ const Tariffs = () => {
 				// withMobile
 				withSearch
 				onSearchChange={e => setSearchPlateNumber(e)}
-				filters={filters}
+				// filters={filters}
 				columns={columns}
 				handler={async (
-					{ startDate, endDate, startTime, endTime },
+					// { startDate, endDate, startTime, endTime },
+					{},
 					{ limit, offset }
 				) => {
-					const [dayStart, monthStart, yearStart] = startDate
-						.split('/')
-						.map(Number)
-					const start = new Date(yearStart, monthStart - 1, dayStart)
-					const [dayEnd, monthEnd, yearEnd] = endDate.split('/').map(Number)
-					const end = new Date(yearEnd, monthEnd - 1, dayEnd)
+					// const [dayStart, monthStart, yearStart] = startDate
+					// 	.split('/')
+					// 	.map(Number)
+					// const start = new Date(yearStart, monthStart - 1, dayStart)
+					// const [dayEnd, monthEnd, yearEnd] = endDate.split('/').map(Number)
+					// const end = new Date(yearEnd, monthEnd - 1, dayEnd)
 					const perPage = limit
 					const page = Math.floor(offset / limit) + 1
 					const { items, totalItems } = await getCars(
 						page,
 						perPage,
-						searchPlateNumber,
-						mergeDateTime(start.toLocaleDateString(), startTime),
-						mergeDateTime(end.toLocaleDateString(), endTime)
+						searchPlateNumber
+						// mergeDateTime(start.toLocaleDateString(), startTime),
+						// mergeDateTime(end.toLocaleDateString(), endTime)
 					)
 					return {
 						rows: items as ICars[],

@@ -42,4 +42,4 @@ export const THEME_DARK = createTheme({
 	},
 })
 
-export default THEME_DARK
+export default THEME_LIGHT

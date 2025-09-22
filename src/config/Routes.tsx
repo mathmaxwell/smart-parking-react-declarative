@@ -3,6 +3,7 @@ import DashboardPage from '../pages/DashboardPage/DashboardPage'
 import CarsSessions from '../pages/CarsSessions/CarsSessions'
 import Tariffs from '../pages/Tariffs/Tariffs'
 import CameraSettings from '../pages/CameraSettings/CameraSettings'
+import HistoryPage from '../pages/HistoryPage/HistoryPage'
 
 interface IRouteItem extends ISwitchItem {
 	sideMenu: string
@@ -20,10 +21,16 @@ export const routes: IRouteItem[] = [
 		element: CarsSessions,
 	},
 	{
+		path: '/cars_sessions/:id',
+		sideMenu: 'root.example_pages.cars_sessions',
+		element: HistoryPage,
+	},
+	{
 		path: '/dashboard',
 		sideMenu: 'root.example_pages.dashboard',
 		element: DashboardPage,
 	},
+
 	{
 		path: '/tariffs',
 		sideMenu: 'root.example_pages.tariffs',

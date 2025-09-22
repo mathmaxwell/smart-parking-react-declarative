@@ -76,7 +76,6 @@ const CarsSessions = () => {
 					const [dayEnd, monthEnd, yearEnd] = endDate.split('/').map(Number)
 					const end = new Date(yearEnd, monthEnd - 1, dayEnd)
 
-					
 					const next = pickDocuments(limit, offset)
 					const iterator = iterateDocuments({
 						createRequest: async ({ limit, page }) => {
@@ -136,6 +135,7 @@ const CarsSessions = () => {
 					}
 				}}
 			/>
+
 			{render()}
 		</>
 	)
