@@ -1,9 +1,12 @@
 import type { ISwitchItem } from 'react-declarative'
 import DashboardPage from '../pages/DashboardPage/DashboardPage'
 import CarsSessions from '../pages/CarsSessions/CarsSessions'
-import Tariffs from '../pages/Tariffs/Tariffs'
+
 import CameraSettings from '../pages/CameraSettings/CameraSettings'
 import HistoryPage from '../pages/HistoryPage/HistoryPage'
+
+import Subscriptions from '../pages/Subscriptions/Subscriptions'
+import Tariff from '../pages/Tariffs/Tariff'
 
 interface IRouteItem extends ISwitchItem {
 	sideMenu: string
@@ -34,7 +37,12 @@ export const routes: IRouteItem[] = [
 	{
 		path: '/tariffs',
 		sideMenu: 'root.example_pages.tariffs',
-		element: Tariffs,
+		element: Tariff,
+	},
+	{
+		path: '/subscriptions',
+		sideMenu: 'root.example_pages.subscriptions',
+		element: Subscriptions,
 	},
 	{
 		path: '/camera_settings',
@@ -46,6 +54,7 @@ export const routes: IRouteItem[] = [
 export const sideMenuClickMap: Record<string, string> = {
 	'root.example_pages.cars_sessions': '/cars_sessions',
 	'root.example_pages.dashboard': '/dashboard',
+	'root.example_pages.subscriptions': '/subscriptions',
 	'root.example_pages.tariffs': '/tariffs',
 	'root.example_pages.camera_settings': '/camera_settings',
 }

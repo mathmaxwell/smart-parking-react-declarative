@@ -63,6 +63,7 @@ export interface ICarGroup {
 	first10Minutes: number
 	from11To59for10: number
 	after61: number
-	from2Hour:number 
-	
+	from2Hour: number
+	startDate: Date
+	endDate: Date
 }

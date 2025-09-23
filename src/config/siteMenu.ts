@@ -4,7 +4,7 @@ import PublicIcon from '@mui/icons-material/Public'
 import HomeIcon from '@mui/icons-material/Home'
 import PaidIcon from '@mui/icons-material/Paid'
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera'
-
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
 export const sidemenu: IScaffold2Group[] = [
 	{
 		id: 'example_pages',
@@ -23,11 +23,15 @@ export const sidemenu: IScaffold2Group[] = [
 			},
 
 			{
+				label: 'subscriptions',
+				id: 'subscriptions',
+				icon: AccountBalanceWalletIcon,
+			},
+			{
 				label: 'tariffs',
 				id: 'tariffs',
 				icon: PaidIcon,
 			},
-
 			{
 				label: 'cameraSettings',
 				id: 'camera_settings',
