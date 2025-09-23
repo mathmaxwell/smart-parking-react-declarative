@@ -7,8 +7,11 @@ import useLoader from './hooks/useLoader'
 import Loader from './pages/Loading/Loading'
 import UserInfo from './common/UserInfo'
 import scaffoldactions from './config/scaffoldmenu'
+import { currentServerName, servers, switchServer } from '../pb'
+import { switchTheme, themes } from './config/theme'
+
 function App() {
-	const [searchState, setSearchState] = useSearchState<{ locale: string }>({
+	const [_, setSearchState] = useSearchState<{ locale: string }>({
 		locale: 'uz',
 	})
 	const item = useRouteItem()
@@ -18,7 +21,7 @@ function App() {
 			loading={loader}
 			noSearch
 			BeforeSearch={UserInfo}
-			appName={'ADMIN'}
+			appName={currentServerName}
 			activeOptionPath={item?.sideMenu || ''}
 			options={sidemenu}
 			actions={scaffoldactions}
@@ -26,63 +29,37 @@ function App() {
 				history.push(sideMenuClickMap[path])
 			}}
 			onAction={path => {
-				const clickedAction = scaffoldactions.find(a => a.action === path)
-				if (clickedAction?.action === 'chooseLanguage') {
-					const currentLocale = searchState.locale || 'eng'
-					const nextLocale =
-						currentLocale === 'eng'
-							? 'ru'
-							: currentLocale === 'ru'
-							? 'uz'
-							: 'eng'
-					localStorage.setItem('lang', nextLocale)
+				if (path === 'uzb') {
+					localStorage.setItem('lang', 'uz')
 					setSearchState(prevState => ({
 						...prevState,
-						locale: nextLocale,
+						locale: 'uz',
 					}))
-
-					setTimeout(() => {
-						window.location.reload()
-					}, 1000)
+				} else if (path === 'rus') {
+					localStorage.setItem('lang', 'ru')
+					setSearchState(prevState => ({
+						...prevState,
+						locale: 'ru',
+					}))
+				} else if (path === 'eng') {
+					localStorage.setItem('lang', 'eng')
+					setSearchState(prevState => ({
+						...prevState,
+						locale: 'eng',
+					}))
 				} else {
-					console.log('Неизвестное действие:', path)
+					if (servers[path as keyof typeof servers]) {
+						switchServer(path as keyof typeof servers)
+					} else if (themes[path as keyof typeof themes]) {
+						switchTheme(path as keyof typeof themes)
+					} else {
+						console.log('не найдено', path)
+					}
 				}
+				setTimeout(() => {
+					window.location.reload()
+				}, 1000)
 			}}
-			// onAction={path => {
-			// 	const clickedAction = scaffoldactions.find(a => a.action === path)
-			// 	if (clickedAction?.action === 'uzb') {
-			// 		localStorage.setItem('lang', 'uzb')
-			// 		setSearchState(prevState => ({
-			// 			...prevState,
-			// 			locale: 'uzb',
-			// 		}))
-
-			// 		setTimeout(() => {
-			// 			window.location.reload()
-			// 		}, 1000)
-			// 	} else if (clickedAction?.action === 'rus') {
-			// 		localStorage.setItem('lang', 'rus')
-			// 		setSearchState(prevState => ({
-			// 			...prevState,
-			// 			locale: 'rus',
-			// 		}))
-
-			// 		setTimeout(() => {
-			// 			window.location.reload()
-			// 		}, 1000)
-			// 	} else if (clickedAction?.action === 'eng') {
-			// 		localStorage.setItem('lang', 'eng')
-			// 		setSearchState(prevState => ({
-			// 			...prevState,
-			// 			locale: 'eng',
-			// 		}))
-			// 		setTimeout(() => {
-			// 			window.location.reload()
-			// 		}, 1000)
-			// 	} else {
-			// 		console.log('Неизвестное действие:', path)
-			// 	}
-			// }}
 		>
 			<Switch
 				Loader={Loader}

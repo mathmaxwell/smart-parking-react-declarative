@@ -1,6 +1,6 @@
 import { pb } from '../../pb'
 import { getMomentStamp, getTimeStamp } from 'get-moment-stamp'
-import type { ICars, ICarsInParking } from '../types/CarsInParking'
+import type { ICarGroup, ICars, ICarsInParking } from '../types/CarsInParking'
 import { iterateDocuments, resolveDocuments } from 'react-declarative'
 export async function getParkingSessions(
 	page = 1,
@@ -18,12 +18,9 @@ export async function getParkingSessions(
 			// Поиск только по датам
 			const safeEntryTime = new Date(startOfDay)
 			safeEntryTime.setHours(0, 0, 0, 0)
-			
+
 			const safeExitTime = new Date(endOfDay)
 			safeExitTime.setHours(0, 0, 0, 0)
-
-
-
 
 			const startDay = getMomentStamp(safeEntryTime)
 			const endDay = getMomentStamp(safeExitTime)
@@ -304,4 +301,20 @@ export async function updateCords() {
 		alert(`Error updating cords: ${err}`)
 		return { items: [], totalItems: 0 }
 	}
+}
+export async function getCarGroup() {
+	try {
+		const cars: ICarGroup[] = await pb.collection('car_groups').getFullList()
+		return cars
+	} catch (err) {
+		alert(`Ошибка при получении car_groups:, ${err}`)
+		return []
+	}
+}
+export interface CarsPagination {
+	items: ICars[]
+	page: number
+	perPage: number
+	totalItems: number
+	totalPages: number
 }

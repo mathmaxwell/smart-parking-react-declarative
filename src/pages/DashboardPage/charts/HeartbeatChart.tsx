@@ -1,4 +1,3 @@
-import { Card } from '@mui/material'
 import { Line } from 'react-chartjs-2'
 import {
 	Chart as ChartJS,
@@ -35,7 +34,7 @@ export function HeartbeatChart({ arrivalsByHour }: HeartbeatChartProps) {
 		labels,
 		datasets: [
 			{
-				label: 'Прибытия по часам',
+				label: 'hourlyArrivals',
 				data: dataPoints,
 				borderColor: '#FF3D00',
 				backgroundColor: 'rgba(255,61,0,0.2)',
@@ -55,12 +54,12 @@ export function HeartbeatChart({ arrivalsByHour }: HeartbeatChartProps) {
 		},
 		scales: {
 			x: {
-				title: { display: true, text: 'Час', color: '#FFFFFF' },
+				title: { display: true, text: 'hour', color: '#FFFFFF' },
 				ticks: { color: '#FFFFFF' },
 				grid: { color: 'rgba(255,255,255,0.1)' },
 			},
 			y: {
-				title: { display: true, text: 'Количество', color: '#FFFFFF' },
+				title: { display: true, text: 'total', color: '#FFFFFF' },
 				beginAtZero: true,
 				ticks: { color: '#FFFFFF' },
 				grid: { color: 'rgba(255,255,255,0.1)' },

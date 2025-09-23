@@ -23,6 +23,10 @@ export interface ICars {
 	type: string
 	start_Date: Date
 	end_Date: Date
+	startMomentStampDay: number
+	startMomentStamp: number
+	endMomentStampDay: number
+	endMomentStamp: number
 	expand?: {
 		type?: {
 			id: string
@@ -49,9 +53,16 @@ export interface ICarsType {
 }
 export interface ICarGroup {
 	id: string
-	display_name: 'other' | 'bus' | 'whiteList' | 'worker' | 'tenant'
+	display_name: 'others' | 'bus' | 'whiteList' | 'worker' | 'tenant'
 	hour: number
 	month: number
 	day: number
 	first2hours: number
+	start: number
+	end: number
+	first10Minutes: number
+	from11To59for10: number
+	after61: number
+	from2Hour:number 
+	
 }

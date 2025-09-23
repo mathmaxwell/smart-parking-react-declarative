@@ -17,7 +17,7 @@ export const sidemenu: IScaffold2Group[] = [
 				icon: HomeIcon,
 			},
 			{
-				label: 'carsInParking',
+				label: 'Records',
 				id: 'cars_sessions',
 				icon: TaxiAlertIcon,
 			},

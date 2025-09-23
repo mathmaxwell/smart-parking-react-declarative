@@ -16,7 +16,7 @@ export const columns: IColumn<{}, ICars>[] = [
 	{
 		type: ColumnType.Component,
 		field: 'plateNumber',
-		headerName: 'номер машины',
+		headerName: 'plateNumber',
 		secondary: false,
 		width: fullWidth => Math.max((fullWidth - 650) / 3, 200),
 		isVisible: () => {
@@ -144,7 +144,7 @@ export const display_fields: TypedField[] = [
 		type: FieldType.Group,
 		fieldRightMargin: '0',
 		fields: [
-			{ type: FieldType.Text, name: 'PlateNumber', title: 'номер машины' },
+			{ type: FieldType.Text, name: 'PlateNumber', title: 'plateNumber' },
 			{ type: FieldType.Text, name: 'ownerName', title: 'название компании' },
 			{
 				type: FieldType.Combo,
@@ -249,11 +249,11 @@ export const display_fields: TypedField[] = [
 export const operations: IListOperation[] = [
 	{
 		action: 'download',
-		label: 'скачать',
+		label: 'download',
 	},
 	{
 		action: 'delete',
-		label: 'удалить',
+		label: 'delete',
 		isAvailable: async row => {
 			console.log(row)
 			return true
@@ -270,11 +270,11 @@ export const actions: IListAction[] = [
 			},
 			{
 				action: 'delete',
-				label: 'удалить',
+				label: 'delete',
 			},
 			{
 				action: 'download',
-				label: 'скачать',
+				label: 'download',
 			},
 		],
 	},

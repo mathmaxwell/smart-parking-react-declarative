@@ -11,7 +11,6 @@ import { getDiff } from '../../../functions/carsInParking'
 import { calculateForFree } from './function'
 import type IListOperation from 'react-declarative/model/IListOperation'
 import history from '../../../helpers/history'
-import { toLower } from 'lodash'
 
 // export const display_fields: TypedField[] = [
 // 	{
@@ -104,7 +103,7 @@ import { toLower } from 'lodash'
 // 									gap: 1,
 // 								}}
 // 							>
-// 								<Typography variant='h6'>время выхода: </Typography>
+// 								<Typography variant='h6'>exitTime: </Typography>
 // 								<Typography variant='body1'>
 // 									{new Date(session.exitTime).toLocaleString().slice(0, 17)}
 // 								</Typography>
@@ -118,7 +117,7 @@ import { toLower } from 'lodash'
 // 									flexWrap: 'wrap',
 // 								}}
 // 							>
-// 								<Typography variant='h6'>обшое время:</Typography>
+// 								<Typography variant='h6'>totalTime:</Typography>
 // 								<Typography variant='body1'>
 // 									{`${diffHours} ч ${diffMinutes} м`}
 // 								</Typography>
@@ -334,7 +333,7 @@ export const display_fields: TypedField[] = [
 									}}
 								>
 									<Typography variant='subtitle1' sx={{ fontWeight: 500 }}>
-										Время входа:
+										entryTime:
 									</Typography>
 									<Typography variant='body1' sx={{ fontWeight: 600 }}>
 										{new Date(session.entryTime).toLocaleString().slice(0, 17)}
@@ -353,7 +352,7 @@ export const display_fields: TypedField[] = [
 									}}
 								>
 									<Typography variant='subtitle1' sx={{ fontWeight: 500 }}>
-										Время выхода:
+										exitTime:
 									</Typography>
 									<Typography variant='body1' sx={{ fontWeight: 600 }}>
 										{new Date(session.exitTime).toLocaleString().slice(0, 17)}
@@ -372,7 +371,7 @@ export const display_fields: TypedField[] = [
 									}}
 								>
 									<Typography variant='subtitle1' sx={{ fontWeight: 500 }}>
-										Общее время:
+										totalTime:
 									</Typography>
 									<Typography variant='body1' sx={{ fontWeight: 600 }}>
 										{`${diffHours} ч ${diffMinutes} м`}
@@ -496,7 +495,7 @@ export const columns: IColumn<{}, ICarsInParking>[] = [
 	{
 		type: ColumnType.Component,
 		field: 'plateNumber',
-		headerName: 'номер машины',
+		headerName: 'plateNumber',
 		secondary: false,
 		width: fullWidth => Math.max((fullWidth - 650) / 3, 200),
 		isVisible: () => {
@@ -517,7 +516,7 @@ export const columns: IColumn<{}, ICarsInParking>[] = [
 	},
 	{
 		type: ColumnType.Compute,
-		headerName: 'время входа',
+		headerName: 'entryTime',
 		primary: true,
 		element: ({ entryTime }) => (
 			<Box
@@ -540,7 +539,7 @@ export const columns: IColumn<{}, ICarsInParking>[] = [
 	},
 	{
 		type: ColumnType.Compute,
-		headerName: 'фотография входа',
+		headerName: 'entryPhoto',
 		primary: true,
 		element: session => (
 			<img
@@ -558,7 +557,7 @@ export const columns: IColumn<{}, ICarsInParking>[] = [
 	},
 	{
 		type: ColumnType.Compute,
-		headerName: 'время выхода',
+		headerName: 'exitTime',
 		primary: true,
 		element: ({ exitTime }) => (
 			<Box
@@ -581,7 +580,7 @@ export const columns: IColumn<{}, ICarsInParking>[] = [
 	},
 	{
 		type: ColumnType.Compute,
-		headerName: 'фотография выхода',
+		headerName: 'exitPhoto',
 		primary: true,
 		element: session => (
 			<img
@@ -599,7 +598,7 @@ export const columns: IColumn<{}, ICarsInParking>[] = [
 	},
 	{
 		type: ColumnType.Component,
-		headerName: 'время',
+		headerName: 'time',
 		element: session => {
 			return (
 				<Box
@@ -692,11 +691,11 @@ export const filters: TypedField[] = [
 export const operations: IListOperation[] = [
 	{
 		action: 'download',
-		label: 'скачать',
+		label: 'download',
 	},
 	{
 		action: 'delete',
-		label: 'удалить',
+		label: 'delete',
 		isAvailable: async row => {
 			console.log(row)
 			return true

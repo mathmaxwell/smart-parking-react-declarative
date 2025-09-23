@@ -1,20 +1,19 @@
 import { FetchView, One } from 'react-declarative'
-import { getAllParkingSessions, getCarsByFilter } from '../../api/carsSessions'
+import { getAllParkingSessions } from '../../api/carsSessions'
 import { useState } from 'react'
 import { formatDate, toDate } from '../CarsSessions/view/function'
 import { filters } from './view/DashboardFields'
-import { Box, Card } from '@mui/material'
-import { calculateDashboard } from './function/calculateDashboard'
-import DashboardCard from './DashboardCards'
-import PeopleIcon from '@mui/icons-material/People'
-import DirectionsBusIcon from '@mui/icons-material/DirectionsBus'
-import WorkIcon from '@mui/icons-material/Work'
-import BusinessIcon from '@mui/icons-material/Business'
-import DashboardChard from './charts/SumChart'
-import { calculateForFreeMonth } from './function/calculateForFreeMonth'
-import DashboardPie from './charts/DashboardPie'
-import DashboardPieTime from './charts/DashboardPieTime'
-import { HeartbeatChart } from './charts/HeartbeatChart'
+import {
+	Paper,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+	Typography,
+} from '@mui/material'
+import { processDashboard } from './function/calculateDashboard'
 
 const DashboardPage = () => {
 	const [filterData, setFilterData] = useState({
@@ -72,103 +71,96 @@ const DashboardPage = () => {
 				}}
 			>
 				{async dashboard => {
-					const result = await calculateDashboard(dashboard)
-					const mounthFree = await getCarsByFilter(
-						toDate(filterData.startDate, filterData.startTime),
-						toDate(filterData.endDate, filterData.endTime)
-					)
-
-					const resultMounthFree = await calculateForFreeMonth(mounthFree)
-
+					const result = await processDashboard(dashboard)
 					return (
-						<Box
-							sx={{
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								flexDirection: 'column',
-								gap: 2,
-							}}
-						>
-							<Box
-								sx={{
-									display: 'grid',
-									gridTemplateColumns: {
-										xs: '1fr',
-										sm: '1fr',
-										md: '1fr 1fr',
-										lg: 'repeat(4, 1fr)',
-									},
-									mt: 2,
-									gap: 2,
-								}}
-							>
-								<DashboardCard
-									// title='Пассажиры (провожающие/встречающие)'
-									title='Пассажиры'
-									icon={<PeopleIcon />}
-									value={result.other.sum}
-									secondaryValue={result.other.count}
-									subtitle='за час по 25.000 сум'
-								/>
-								<DashboardCard
-									// title='Туристические автобусы/микроавтобусы/минивэны'
-									title='Туристические автобусы'
-									icon={<DirectionsBusIcon />}
-									value={result.bus.sum}
-									secondaryValue={result.bus.count}
-									subtitle='первые 2 часа 25.000, потом 25.000 за час'
-								/>
-								<DashboardCard
-									// title='Сотрудники (абонемент)'
-									title='Сотрудники'
-									icon={<WorkIcon />}
-									value={result.worker.sum + resultMounthFree.worker.sum}
-									secondaryValue={result.worker.count}
-									mounthCount={resultMounthFree.worker.count}
-									subtitle='за месяц 100.000 сум'
-								/>
-								<DashboardCard
-									// title='Арендаторы и прочие организации'
-									title='Арендаторы'
-									icon={<BusinessIcon />}
-									mounthCount={resultMounthFree.tenant.count}
-									value={result.tenant.sum + resultMounthFree.tenant.sum}
-									secondaryValue={result.tenant.count}
-									subtitle='за месяц 300.000 сум'
-								/>
-							</Box>
-							<Box
-								sx={{
-									display: 'grid',
-									gridTemplateColumns: {
-										xs: '1fr',
-										sm: '1fr',
-										md: '1fr',
-										lg: 'repeat(2, 1fr)',
-									},
-									mt: 2,
-									gap: 2,
-									width: '100%',
-								}}
-							>
-								<Card sx={{ width: '100%', height: '450px' }}>
-									<DashboardChard
-										result={result}
-										resultMounthFree={resultMounthFree}
-									/>
-								</Card>
-								<Card sx={{ width: '100%', height: '450px' }}>
-									<DashboardPie resultMounthFree={resultMounthFree} />
-								</Card>
-								<Card sx={{ width: '100%', height: '450px' }}>
-									<DashboardPieTime result={result} />
-								</Card>
-								<Card sx={{ width: '100%', height: '450px' }}>
-									<HeartbeatChart arrivalsByHour={result.arrivalsByHour} />
-								</Card>
-							</Box>
-						</Box>
+						<TableContainer component={Paper} sx={{ mt: 1 }}>
+							<Table sx={{ minWidth: 650 }} aria-label='summary table'>
+								<TableHead>
+									<TableRow>
+										<TableCell>
+											<Typography variant='h6'>category</Typography>
+										</TableCell>
+										<TableCell align='right'>
+											<Typography variant='h6'>howManyTimesArrived</Typography>
+										</TableCell>
+										<TableCell align='right'>
+											<Typography variant='h6'>totalSum</Typography>
+										</TableCell>
+									</TableRow>
+								</TableHead>
+								<TableBody>
+									{/* Итог */}
+									<TableRow>
+										<TableCell component='th' scope='row'>
+											<Typography variant='h6'>total</Typography>
+										</TableCell>
+										<TableCell align='right'>
+											<Typography variant='h6'>
+												{result?.bus.count +
+													result?.others.count +
+													result?.tenant.count +
+													result?.worker.count +
+													result?.whiteList.count}
+											</Typography>
+										</TableCell>
+										<TableCell align='right'>
+											<Typography variant='h6'>
+												{result?.bus.sum +
+													result?.others.sum +
+													result?.tenant.sum +
+													result?.worker.sum +
+													result?.whiteList.sum}
+											</Typography>
+										</TableCell>
+									</TableRow>
+									{/* Автобусы */}
+									<TableRow>
+										<TableCell component='th' scope='row'>
+											<Typography>bus</Typography>
+										</TableCell>
+										<TableCell align='right'>{result?.bus.count}</TableCell>
+										<TableCell align='right'>{result?.bus.sum}</TableCell>
+									</TableRow>
+
+									{/* Другие */}
+									<TableRow>
+										<TableCell component='th' scope='row'>
+											<Typography>others</Typography>
+										</TableCell>
+										<TableCell align='right'>{result?.others.count}</TableCell>
+										<TableCell align='right'>{result?.others.sum}</TableCell>
+									</TableRow>
+
+									{/* Работники */}
+									<TableRow>
+										<TableCell component='th' scope='row'>
+											<Typography>worker</Typography>
+										</TableCell>
+										<TableCell align='right'>{result?.worker.count}</TableCell>
+										<TableCell align='right'>{result?.worker.sum}</TableCell>
+									</TableRow>
+
+									{/* Арендаторы */}
+									<TableRow>
+										<TableCell component='th' scope='row'>
+											<Typography>tenant</Typography>
+										</TableCell>
+										<TableCell align='right'>{result?.tenant.count}</TableCell>
+										<TableCell align='right'>{result?.tenant.sum}</TableCell>
+									</TableRow>
+									{/* Белый список */}
+									<TableRow>
+										<TableCell component='th' scope='row'>
+											<Typography>whiteList</Typography>
+										</TableCell>
+										<TableCell align='right'>
+											{result?.whiteList.count}
+										</TableCell>
+										<TableCell align='right'>-</TableCell>
+									</TableRow>
+								</TableBody>
+							</Table>
+						</TableContainer>
 					)
 				}}
 			</FetchView>

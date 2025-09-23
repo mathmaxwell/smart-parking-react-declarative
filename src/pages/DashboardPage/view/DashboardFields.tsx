@@ -84,7 +84,7 @@ export const filters: TypedField[] = [
 							{
 								type: FieldType.Button,
 								name: 'month',
-								title: 'за месяц',
+								title: 'forAMonth',
 							},
 							{
 								type: FieldType.Button,

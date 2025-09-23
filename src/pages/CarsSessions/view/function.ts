@@ -174,10 +174,10 @@ export function mergeDateTime(
 
 function mapSession(session: ICarsInParking) {
 	return {
-		номер: session.plateNumber,
-		автобус: session.isBus,
-		'время входа': session.entryTime.toString().slice(0, 16),
-		'время выхлда': session.exitTime.toString().slice(0, 16),
+		plateNumber: session.plateNumber,
+		bus: session.isBus,
+		entryTime: session.entryTime.toString().slice(0, 16),
+		exitTime: session.exitTime.toString().slice(0, 16),
 		// entryPhoto: session.entryPhoto
 		// 	? pb.files.getURL(session, session.entryPhoto)
 		// 	: '',
@@ -188,10 +188,10 @@ function mapSession(session: ICarsInParking) {
 }
 function mapCars(session: ICars) {
 	return {
-		номер: session.plateNumber,
+		plateNumber: session.plateNumber,
 		'имя владелца': session.ownerName || '-',
-		'время начало': session.start_Date.toString().slice(0, 16),
-		'время окончание': session.end_Date.toString().slice(0, 16),
+		startTime: session.start_Date.toString().slice(0, 16),
+		'endTime': session.end_Date.toString().slice(0, 16),
 	}
 }
 

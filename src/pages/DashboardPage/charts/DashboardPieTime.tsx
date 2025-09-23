@@ -1,6 +1,5 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from 'chart.js'
 import { Pie } from 'react-chartjs-2'
-import { Card } from '@mui/material'
 
 import type { DashboardResult } from '../function/calculateDashboard'
 
@@ -53,7 +52,7 @@ const DashboardPieTime = ({
 			},
 			title: {
 				display: true,
-				text: `Общее время: ${totalHours} часов`,
+				text: `totalTime: ${totalHours} hour`,
 				color: '#fff',
 				font: { size: 16 },
 			},
@@ -63,7 +62,7 @@ const DashboardPieTime = ({
 				callbacks: {
 					label: function (tooltipItem: any) {
 						const value = tooltipItem.raw
-						return `${tooltipItem.label}: ${value} часов`
+						return `${tooltipItem.label}: ${value} hour`
 					},
 				},
 			},
