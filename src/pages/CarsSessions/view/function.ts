@@ -191,7 +191,7 @@ function mapCars(session: ICars) {
 		plateNumber: session.plateNumber,
 		'имя владелца': session.ownerName || '-',
 		startTime: session.start_Date.toString().slice(0, 16),
-		'endTime': session.end_Date.toString().slice(0, 16),
+		endTime: session.end_Date.toString().slice(0, 16),
 	}
 }
 
@@ -260,7 +260,26 @@ export const formatDate = (d: Date) => {
 }
 export function parseDate(dateStr: string): Date | undefined {
 	if (!dateStr) return undefined
-	const [day, month, year] = dateStr.split('/').map(Number)
-	if (!day || !month || !year) return undefined
-	return new Date(year, month - 1, day)
+	const [dayStr, monthStr, yearStr] = dateStr.split('/')
+	const day = Number(dayStr)
+	const month = Number(monthStr)
+	const year = Number(yearStr)
+	if (
+		!Number.isInteger(day) ||
+		!Number.isInteger(month) ||
+		!Number.isInteger(year)
+	) {
+		return undefined
+	}
+	if (day <= 0 || month <= 0 || month > 12) return undefined
+	const date = new Date(Date.UTC(year, month - 1, day))
+	if (
+		date.getUTCFullYear() !== year ||
+		date.getUTCMonth() !== month - 1 ||
+		date.getUTCDate() !== day
+	) {
+		return undefined
+	}
+
+	return date
 }

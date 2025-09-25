@@ -65,4 +65,15 @@ export const LOCALE: Record<string, string> = {
 	editTariff: 'Редактировать тариф',
 	deleteTariff: 'Удалить тариф',
 	addTariff: 'Добавить тариф',
+	selectPeriodForNewTariff:
+		'Выберите период, который новый тариф будет действовать',
+	areYouSureDeleteTariff: 'Вы уверены, что хотите удалить тариф?',
+	canRecreateTariff: 'После удаления вы можете заново создать тариф.',
+	CENCEL: 'Отменить',
+	noSet: 'Не установлено',
+	custom: 'Индивидуальная стоимость',
+	positiveNumberRequired: 'Требуется положительное число',
+	requiredField: 'Обязательное поле',
+	price: 'Цена',
+	valueType: 'Тип значения',
 }

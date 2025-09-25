@@ -65,4 +65,15 @@ export const LOCALE: Record<string, string> = {
 	editTariff: 'Edit tariff',
 	deleteTariff: 'Delete tariff',
 	addTariff: 'Add tariff',
+	selectPeriodForNewTariff: 'Select the period for the new tariff',
+	areYouSureDeleteTariff: 'Are you sure you want to delete the tariff?',
+	canRecreateTariff: 'After deleting, you can recreate the tariff.',
+	CENCEL: 'Cancel',
+	noSet: 'Not set',
+	custom: 'Custom cost',
+	positiveNumberRequired: 'Positive number required',
+	requiredField: 'Required field',
+	price: 'Price',
+	valueType: 'Value type',
+
 }

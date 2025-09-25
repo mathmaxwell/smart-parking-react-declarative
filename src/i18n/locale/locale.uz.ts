@@ -65,4 +65,17 @@ export const LOCALE: Record<string, string> = {
 	editTariff: 'Tarifni tahrirlash',
 	deleteTariff: 'Tarifni oʻchirish',
 	addTariff: 'Tarif qoʻshish',
+	selectPeriodForNewTariff: 'Yangi tarif amal qiladigan davrni tanlang',
+	areYouSureDeleteTariff:
+		'Tarifni oʻchirishni xohlashingizga ishonchingiz komilmi?',
+	canRecreateTariff:
+		'Oʻchirilgandan soʻng, tarifni qayta yaratishingiz mumkin.',
+	CENCEL: 'Bekor qilish',
+	noSet: 'Oʻrnatilmagan',
+	custom: 'Maxsus narx',
+	positiveNumberRequired: 'Musbat son talab qilinadi',
+	requiredField: 'Majburiy maydon',
+	price: 'Narx',
+	valueType: 'Qiymat turi',
+
 }

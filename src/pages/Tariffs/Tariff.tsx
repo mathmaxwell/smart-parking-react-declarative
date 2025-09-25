@@ -1,4 +1,4 @@
-import { FetchView, useActionModal } from 'react-declarative'
+import { FetchView, useActionModal, useConfirm } from 'react-declarative'
 import { getCarGroup } from '../../api/carsSessions'
 import {
 	Box,
@@ -13,36 +13,121 @@ import {
 	Typography,
 } from '@mui/material'
 import type { ICarGroup } from '../../types/CarsInParking'
-import { createTariffs } from '../../api/tariffs'
-import { tariffFields } from './view/TariffFields'
-const columns: (keyof ICarGroup)[] = [
-	'first10Minutes',
-	'from11To59for10',
-	'after61',
-	'first2hours',
-	'from2Hour',
-	'hour',
-	'day',
-	'month',
-]
-const order: ['others', 'bus', 'worker', 'tenant', 'whiteList'] = [
-	'others',
-	'bus',
-	'worker',
-	'tenant',
-	'whiteList',
-]
+import {
+	createTariffs,
+	deleteTariffs,
+	updateTariff,
+	updateTariffCost,
+} from '../../api/tariffs'
+import {
+	tariffDateUpdateFields,
+	tariffFields,
+	columns,
+	order,
+	tariffCostUpdateFields,
+} from './view/tariffFields'
+import { parseDate } from '../CarsSessions/view/function'
+
 const Tariff = () => {
 	const { pickData, render } = useActionModal({
 		withActionButton: true,
 		fields: tariffFields,
 		onSubmit: async (data: any) => {
-			await createTariffs(data.start, data.end)
+			createTariffs(
+				parseDate(data.startDate) || new Date(),
+				parseDate(data.endDate) || new Date()
+			)
+
 			window.location.reload()
 			return true
 		},
 		submitLabel: 'save',
 	})
+	const { pickData: updateTariffCostModal, render: renderTariffCost } =
+		useActionModal({
+			withActionButton: true,
+			fields: tariffCostUpdateFields,
+			onSubmit: async (data: any) => {
+				const lang = localStorage.getItem('lang')
+
+				// словари для разных языков
+				const valueMap: Record<
+					string,
+					{ free: string; null: string; custom: string }
+				> = {
+					uz: {
+						free: 'bepul',
+						null: 'Oʻrnatilmagan',
+						custom: 'Maxsus narx',
+					},
+					ru: {
+						free: 'бесплатно',
+						null: 'Не установлено',
+						custom: 'Индивидуальная стоимость',
+					},
+					en: {
+						free: 'free',
+						null: 'no set',
+						custom: 'custom',
+					},
+				}
+
+				const currentLang = valueMap[lang || 'en']
+
+				let finalValue: number
+				switch (data.valueType) {
+					case currentLang.free:
+						finalValue = -1
+						break
+					case currentLang.null:
+						finalValue = 0
+						break
+					case currentLang.custom:
+						finalValue = Number(data.customValue) || 0
+						break
+					default:
+						finalValue = 0
+				}
+
+				const { displayValue } = JSON.parse(
+					localStorage.getItem('tariffCostUpdate') || '{}'
+				)
+
+				updateTariffCost(displayValue, finalValue)
+				window.location.reload()
+				return true
+			},
+
+			submitLabel: 'save',
+		})
+	const { pickData: updateDateOfTariff, render: renderTariffDate } =
+		useActionModal({
+			withActionButton: true,
+			fields: tariffDateUpdateFields,
+			onSubmit: async (data: any) => {
+				updateTariff(
+					parseDate(data.startDate) || new Date(),
+					parseDate(data.endDate) || new Date()
+				)
+				window.location.reload()
+				return true
+			},
+			submitLabel: 'save',
+		})
+
+	const pickConfirm = useConfirm({
+		title: 'areYouSureDeleteTariff',
+		msg: 'canRecreateTariff',
+		canCancel: true,
+	})
+
+	const handleDeleteTariff = async () => {
+		const result = await pickConfirm().toPromise()
+		if (result) {
+			await deleteTariffs()
+			window.location.reload()
+		}
+	}
 	return (
 		<>
 			<FetchView
@@ -66,7 +151,6 @@ const Tariff = () => {
 						acc[key].cars.push(car)
 						return acc
 					}, {} as Record<string, { start: number; end: number; cars: ICarGroup[]; start_Date: Date; end_Date: Date }>)
-
 					const groupedArray = Object.values(groupedCarGroups)
 					return (
 						<>
@@ -116,6 +200,8 @@ const Tariff = () => {
 														'selectedTariff',
 														JSON.stringify(tariff)
 													)
+
+													updateDateOfTariff()
 												}}
 											>
 												editTariff
@@ -127,6 +213,7 @@ const Tariff = () => {
 														'selectedTariff',
 														JSON.stringify(tariff)
 													)
+													handleDeleteTariff()
 												}}
 											>
 												deleteTariff
@@ -189,8 +276,13 @@ const Tariff = () => {
 																				onClick={() => {
 																					localStorage.setItem(
 																						'tariffCostUpdate',
-																						JSON.stringify({ tariff, car })
+																						JSON.stringify({
+																							group: tariff,
+																							car,
+																							displayValue: col,
+																						})
 																					)
+																					updateTariffCostModal()
 																				}}
 																			>
 																				{displayValue}
@@ -212,6 +304,8 @@ const Tariff = () => {
 				}}
 			</FetchView>
 			{render()}
+			{renderTariffDate()}
+			{renderTariffCost()}
 		</>
 	)
 }
