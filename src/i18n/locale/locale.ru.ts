@@ -76,4 +76,13 @@ export const LOCALE: Record<string, string> = {
 	requiredField: 'Обязательное поле',
 	price: 'Цена',
 	valueType: 'Тип значения',
+	areYouSureDeleteRecord: 'Вы уверены, что хотите удалить запись?',
+	cannotRecreateRecord: 'После удаления вы не можете заново создать эту запись',
+	minute: 'мин',
+	som: 'сум',
+	subscriptionActiveUntil: 'Подписка активна до',
+	subscriptionEnded: 'Подписка закончилась',
+	toPayExtra: 'К доплате',
+	noActiveSubscriptionNextStarts: 'Нет активной подписки. Следующая начинается',
+	
 }

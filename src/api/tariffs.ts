@@ -4,6 +4,8 @@ import { pb } from '../../pb'
 import type { ICarGroup } from '../types/CarsInParking'
 
 export async function createTariffs(startOfDay: Date, endOfDay: Date) {
+
+	
 	try {
 		const startDate = new Date(startOfDay)
 		const endDate = new Date(endOfDay)

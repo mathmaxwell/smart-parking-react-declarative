@@ -144,6 +144,5 @@ export const tariffCostUpdateFields: TypedField[] = [
 			}
 			return null
 		},
-		// inputRows: 1, // Use this if you want to specify the number of rows for a multiline input
 	},
 ]

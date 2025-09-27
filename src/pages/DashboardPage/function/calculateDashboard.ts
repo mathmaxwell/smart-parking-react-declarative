@@ -1,5 +1,5 @@
 import { getMomentStamp, getTimeStamp } from 'get-moment-stamp'
-import { getCarGroup, getCarsByType } from '../../../api/carsSessions'
+import { getCarGroup, getCars, getCarsByType } from '../../../api/carsSessions'
 import type {
 	ICarGroup,
 	ICars,
@@ -125,7 +125,7 @@ export async function calculateDashboard(dashboard: ICarsInParking[]) {
 	}
 }
 
-export function findSubscription(
+export async function findSubscription(
 	subscriptions: ICars[] | undefined,
 	startDay: number,
 	endDay: number,
@@ -166,8 +166,11 @@ export function findSubscription(
 
 		// Подписка покрывает всю сессию
 		if (subStart <= sessionStart && subEnd >= sessionEnd) {
+			const name = await getCarsByType(sub.type)
+
 			const display_name =
-				sub.expand?.type?.display_name ?? (isBus ? 'others' : 'others')
+				name[0].expand?.type?.display_name ?? (isBus ? 'others' : 'others')
+
 			return {
 				isSubscription: true,
 				minutes: 0,
@@ -513,7 +516,7 @@ export async function calculateFeeWithSubscriptions(
 	const endMinute = getTimeStamp(new Date(session.exitTime))
 	const tariffs: ICarGroup[] = await getTariffOfLocal()
 
-	const info = findSubscription(
+	const info = await findSubscription(
 		subscriptions,
 		startDay,
 		endDay,
@@ -539,6 +542,7 @@ export async function calculateFeeWithSubscriptions(
 						| 'tenant'
 						| 'worker'
 			  )
+
 	return calculateFee(tarif, info)
 }
 export async function processDashboard(dashboard: ICarsInParking[]) {
@@ -571,4 +575,67 @@ export async function processDashboard(dashboard: ICarsInParking[]) {
 	}
 
 	return stats
+}
+export interface ISubscriptionPurchase {
+	plateNumber: string
+	startDay: number
+	endDay: number
+	type: 'day' | 'month'
+	price: number
+	tariffId: string
+}
+
+export interface ISubscriptionsResult {
+	total: number
+	purchases: ISubscriptionPurchase[]
+}
+
+export async function calculateSubscriptionsCost({
+	plateNumber,
+	typeName,
+}: {
+	plateNumber: string
+	typeName: string
+}): Promise<ISubscriptionsResult> {
+	const tariffs: ICarGroup[] = await getTariffOfLocal()
+	const type = await getCars(1, 200, plateNumber)
+	const subscriptions = type.items
+
+	const result: ISubscriptionPurchase[] = []
+
+	for (const sub of subscriptions) {
+		const { startMomentStampDay, endMomentStampDay } = sub
+
+		// ищем подходящий тариф
+		const tariff = tariffs.find(
+			t =>
+				t.start <= startMomentStampDay &&
+				t.end > startMomentStampDay &&
+				t.display_name === typeName
+		)
+
+		if (!tariff) continue // если тариф не найден, пропускаем
+
+		// считаем длительность подписки
+		const duration = endMomentStampDay - startMomentStampDay
+
+		// если 0–2 дня → это дневной тариф, иначе месячный
+		const isDay = duration <= 2
+
+		const purchase: ISubscriptionPurchase = {
+			plateNumber,
+			startDay: startMomentStampDay,
+			endDay: endMomentStampDay,
+			type: isDay ? 'day' : 'month',
+			price: isDay ? tariff.day : tariff.month,
+			tariffId: tariff.id,
+		}
+
+		result.push(purchase)
+	}
+
+	// считаем общую сумму
+	const total = result.reduce((sum, r) => sum + r.price, 0)
+
+	return { total, purchases: result }
 }

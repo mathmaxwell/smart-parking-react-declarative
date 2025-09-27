@@ -33,7 +33,7 @@ const Tariff = () => {
 		withActionButton: true,
 		fields: tariffFields,
 		onSubmit: async (data: any) => {
-			createTariffs(
+			await createTariffs(
 				parseDate(data.startDate) || new Date(),
 				parseDate(data.endDate) || new Date()
 			)
@@ -49,8 +49,6 @@ const Tariff = () => {
 			fields: tariffCostUpdateFields,
 			onSubmit: async (data: any) => {
 				const lang = localStorage.getItem('lang')
-
-				// словари для разных языков
 				const valueMap: Record<
 					string,
 					{ free: string; null: string; custom: string }
@@ -93,7 +91,7 @@ const Tariff = () => {
 					localStorage.getItem('tariffCostUpdate') || '{}'
 				)
 
-				updateTariffCost(displayValue, finalValue)
+				await updateTariffCost(displayValue, finalValue)
 				window.location.reload()
 				return true
 			},

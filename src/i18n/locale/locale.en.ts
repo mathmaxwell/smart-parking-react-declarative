@@ -75,5 +75,12 @@ export const LOCALE: Record<string, string> = {
 	requiredField: 'Required field',
 	price: 'Price',
 	valueType: 'Value type',
-
+	areYouSureDeleteRecord: 'Are you sure you want to delete the record?',
+	cannotRecreateRecord: 'After deleting, you cannot recreate this record',
+	minute: 'minute',
+	som: 'som',
+	subscriptionActiveUntil: 'Subscription active until',
+	subscriptionEnded: 'Subscription ended',
+	toPayExtra: 'To pay extra',
+	noActiveSubscriptionNextStarts: 'No active subscription. The next one starts',
 }

@@ -24,7 +24,7 @@ export const routes: IRouteItem[] = [
 		element: CarsSessions,
 	},
 	{
-		path: '/cars_sessions/:id',
+		path: '/cars_sessions/:plateNumber',
 		sideMenu: 'root.example_pages.cars_sessions',
 		element: HistoryPage,
 	},

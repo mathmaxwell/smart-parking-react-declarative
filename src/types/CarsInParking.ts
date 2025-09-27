@@ -67,3 +67,10 @@ export interface ICarGroup {
 	startDate: Date
 	endDate: Date
 }
+export type DashboardResult = {
+	bus: { count: number; sum: number }
+	others: { count: number; sum: number }
+	whiteList: { count: number; sum: number }
+	worker: { count: number; sum: number }
+	tenant: { count: number; sum: number }
+}

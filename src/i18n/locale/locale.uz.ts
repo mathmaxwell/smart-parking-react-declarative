@@ -77,5 +77,15 @@ export const LOCALE: Record<string, string> = {
 	requiredField: 'Majburiy maydon',
 	price: 'Narx',
 	valueType: 'Qiymat turi',
+	areYouSureDeleteRecord:
+		'Yozuvni oʻchirishni xohlashingizga ishonchingiz komilmi?',
 
+	cannotRecreateRecord:
+		'Oʻchirilgandan soʻng, bu yozuvni qayta yaratishingiz mumkin emas',
+	minute: 'daqiqa',
+	som: 'soʻm',
+	subscriptionActiveUntil: 'Obuna quyidagi sanagacha faol',
+	subscriptionEnded: 'Obuna tugadi',
+	toPayExtra: 'Qoʻshimcha toʻlovga',
+	noActiveSubscriptionNextStarts: 'Faol obuna yoʻq. Keyingisi boshlanadi',
 }

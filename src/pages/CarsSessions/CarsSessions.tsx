@@ -9,15 +9,16 @@ import {
 	type ISize,
 	type RowId,
 } from 'react-declarative'
-import type { ICarsInParking } from '../../types/CarsInParking'
+import type { ICars, ICarsInParking } from '../../types/CarsInParking'
 import {
 	deleteParkingSessions,
-	getCarsByType,
+	getCars,
 	getParkingSessions,
 } from '../../api/carsSessions'
 import { useState } from 'react'
 import { columns, display_fields, filters, operations } from './view/Fields'
 import { downloadSessionsXLSX, mergeDateTime } from './view/function'
+import { calculateFeeWithSubscriptions } from '../DashboardPage/function/calculateDashboard'
 const CarsSessions = () => {
 	const [selectedRow, setSelectedRow] = useActualRef<ICarsInParking | null>(
 		null
@@ -27,24 +28,36 @@ const CarsSessions = () => {
 		withActionButton: false,
 		sizeRequest: (size: ISize) => {
 			return {
-				height: size.height * 0.7,
+				height: 827,
 				width: size.width * 0.8,
 			}
 		},
 		fields: display_fields,
-		handler: async () => ({
-			...selectedRow.current,
-			billingInfo: await getCarsByType(
-				'',
-				'',
-				selectedRow.current?.plateNumber
-			),
-		}),
+		handler: async () => {
+			const ICarInfo = await getCars(1, 50, selectedRow.current?.plateNumber)
+
+			const cars: ICars[] = ICarInfo.items as ICars[]
+
+			const costInfo = await calculateFeeWithSubscriptions(
+				{
+					entryTime: selectedRow.current!.entryTime,
+					exitTime: selectedRow.current!.exitTime,
+					isBus: selectedRow.current!.isBus,
+				},
+				cars
+			)
+
+			return {
+				...selectedRow.current,
+				ICarInfo,
+				costInfo,
+			}
+		},
 	})
 
 	const pickConfirm = useConfirm({
-		title: 'Вы уверены?',
-		msg: 'Действие необратимо. Продолжить?',
+		title: 'areYouSureDeleteRecord',
+		msg: 'cannotRecreateRecord',
 	})
 
 	const [searchPlateNumber, setSearchPlateNumber] = useState<string>('')
@@ -63,7 +76,7 @@ const CarsSessions = () => {
 				// withMobile
 				withSearch
 				onSearchChange={e => setSearchPlateNumber(e)}
-				filters={filters}
+				filters={filters} //start date 2024
 				columns={columns}
 				handler={async (
 					{ startDate, endDate, startTime, endTime },

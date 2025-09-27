@@ -117,7 +117,6 @@ export async function getAllParkingSessions(
 		})
 
 		const allItemsShort = await resolveDocuments(iterator)
-
 		return allItemsShort as ICarsInParking[]
 	} catch (err) {
 		alert(`Ошибка при получении ParkingSessions: ${err}`)
