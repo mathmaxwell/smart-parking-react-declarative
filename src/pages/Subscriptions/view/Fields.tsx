@@ -38,7 +38,7 @@ export const columns: IColumn<{}, ICars>[] = [
 	{
 		type: ColumnType.Component,
 		field: 'ownerName',
-		headerName: 'название компании',
+		headerName: 'company_name',
 		secondary: false,
 		width: fullWidth => Math.max((fullWidth - 650) / 3, 200),
 		isVisible: () => {
@@ -59,18 +59,17 @@ export const columns: IColumn<{}, ICars>[] = [
 	},
 	{
 		type: ColumnType.Compute,
-		headerName: 'тип',
+		headerName: 'category',
 		element: ({ type }) => {
 			const [data, { loading }] = useAsyncValue(async () => {
 				return await getTypesCarById(type)
 			})
 			if (loading) {
-				return <>загрузка</>
+				return <>{'loading'}</>
 			}
-			if (data?.display_name === 'worker') return <>Сотрудники (абонемент)</>
-			else if (data?.display_name === 'tenant')
-				return <>Арендаторы и прочие организации (абонемент)</>
-			else if (data?.display_name === 'whiteList') return <>Белый список</>
+			if (data?.display_name === 'worker') return <>{'worker'}</>
+			else if (data?.display_name === 'tenant') return <>{'tenant'}</>
+			else if (data?.display_name === 'whiteList') return <>{'whiteList'}</>
 			else {
 				return <>{data?.display_name}</>
 			}
@@ -79,7 +78,7 @@ export const columns: IColumn<{}, ICars>[] = [
 	},
 	{
 		type: ColumnType.Compute,
-		headerName: 'начало подписки',
+		headerName: 'subscription_start',
 		primary: true,
 		element: ({ start_Date }) => (
 			<Box
@@ -103,7 +102,7 @@ export const columns: IColumn<{}, ICars>[] = [
 
 	{
 		type: ColumnType.Compute,
-		headerName: 'конец подписки',
+		headerName: 'subscription_end',
 		primary: true,
 		element: ({ end_Date }) => (
 			<Box
@@ -133,7 +132,7 @@ export const display_fields: TypedField[] = [
 			return (
 				<>
 					<Typography variant='body2' sx={{ textAlign: 'center' }}>
-						subscriptionNote
+						{'subscriptionNote'}
 					</Typography>
 				</>
 			)

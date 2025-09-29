@@ -1,6 +1,6 @@
 import { FetchView, One } from 'react-declarative'
 import { header } from './view/Fields'
-import { getAllParkingSessions, getCars } from '../../api/carsSessions'
+import { getAllParkingSessions } from '../../api/carsSessions'
 import {
 	calculateSubscriptionsCost,
 	processDashboard,
@@ -118,7 +118,7 @@ const HistoryPage = ({ plateNumber }: { plateNumber: string }) => {
 														fontWeight: 500,
 													}}
 												>
-													Номерной знак
+													{'plateNumber'}
 												</Typography>
 												<Typography
 													variant='h5'
@@ -164,7 +164,7 @@ const HistoryPage = ({ plateNumber }: { plateNumber: string }) => {
 														fontWeight: 500,
 													}}
 												>
-													Прибытия
+													{'arrival'}
 												</Typography>
 												<Typography
 													variant='h5'
@@ -210,7 +210,7 @@ const HistoryPage = ({ plateNumber }: { plateNumber: string }) => {
 														fontWeight: 500,
 													}}
 												>
-													Платежи
+													{'payments'}
 												</Typography>
 												<Typography
 													variant='h5'
@@ -256,7 +256,7 @@ const HistoryPage = ({ plateNumber }: { plateNumber: string }) => {
 														fontWeight: 500,
 													}}
 												>
-													подписки
+													{'subscriptions'}
 												</Typography>
 												<Typography
 													variant='h5'

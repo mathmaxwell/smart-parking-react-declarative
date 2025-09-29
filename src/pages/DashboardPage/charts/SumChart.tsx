@@ -11,7 +11,6 @@ import {
 } from 'chart.js'
 import { Bar } from 'react-chartjs-2'
 import { formatNumber } from '../../CarsSessions/view/function'
-import { Card } from '@mui/material'
 import type { Result } from '../function/calculateForFreeMonth'
 
 const DashboardChard = ({
@@ -55,25 +54,25 @@ const DashboardChard = ({
 		datasets: [
 			{
 				color: '#fff',
-				label: 'Пассажиры',
+				label: 'others',
 				data: [sums.other],
 				backgroundColor: '#f87171',
 			},
 			{
 				color: '#fff',
-				label: 'Туристические',
+				label: 'bus',
 				data: [sums.bus],
 				backgroundColor: '#60a5fa',
 			},
 			{
 				color: '#fff',
-				label: 'Сотрудники',
+				label: 'worker',
 				data: [sums.worker],
 				backgroundColor: '#34d399',
 			},
 			{
 				color: '#fff',
-				label: 'Арендаторы',
+				label: 'tenant',
 				data: [sums.tenant],
 				backgroundColor: '#facc15',
 			},
@@ -90,7 +89,7 @@ const DashboardChard = ({
 			title: {
 				display: true,
 				color: '#fff',
-				text: `Общий доход: ${formatNumber(totalSum)} сум`,
+				text: `${'dashboard'}: ${formatNumber(totalSum)} ${'som'}`,
 			},
 		},
 		scales: {

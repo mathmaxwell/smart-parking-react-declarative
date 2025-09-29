@@ -1,8 +1,8 @@
-import { Box, Button, Typography } from '@mui/material'
+import { Box, IconButton, Typography } from '@mui/material'
 import { FieldType } from 'react-declarative'
 import type TypedField from 'react-declarative/model/TypedField'
 import history from '../../../helpers/history'
-
+import UndoIcon from '@mui/icons-material/Undo'
 export const header: TypedField[] = [
 	{
 		type: FieldType.Component,
@@ -16,18 +16,19 @@ export const header: TypedField[] = [
 					position: 'relative',
 				}}
 			>
-				<Button
-					sx={{ position: 'absolute', top: 0, right: 0 }}
+				<IconButton
+					sx={{ position: 'absolute', top: 0, left: 0 }}
 					onClick={e => {
 						history.replace(`/cars_sessions`)
 						e.stopPropagation()
 						window.location.reload()
 					}}
 				>
-					назад
-				</Button>
+					<UndoIcon />
+					{'back'}
+				</IconButton>
 				<Typography variant='h5' component='h2' sx={{ fontWeight: 600 }}>
-					история
+					{'history'}
 				</Typography>
 			</Box>
 		),

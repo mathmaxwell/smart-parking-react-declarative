@@ -35,13 +35,7 @@ export const fields: TypedField[] = [
 			{
 				type: FieldType.Component,
 				element: () => {
-					return (
-						<>
-							После изменения сохраните, чтобы не потерять изменения. После
-							сохранения изменений камера будет распознавать номера машин только
-							в отмеченной области.
-						</>
-					)
+					return <>{'save_after_change'}</>
 				},
 			},
 		],
@@ -73,7 +67,7 @@ export const fields: TypedField[] = [
 									(photo.photo.cords.items[0].cords?.['top-right']?.x ?? 50) -
 									(photo.photo.cords.items[0].cords?.['top-left']?.x ?? 50),
 								color: '#EFE771',
-								label: 'Площадь',
+								label: 'area',
 								angle: 0,
 							},
 						]}
@@ -94,7 +88,7 @@ export const fields: TypedField[] = [
 						alert('сохронено')
 					}}
 				>
-					Сохранить
+					{'save'}
 				</Button>
 			)
 		},

@@ -341,7 +341,7 @@ export const columns: IColumn<{}, ICarsInParking>[] = [
 							window.location.reload()
 						}}
 					>
-						showHistory
+						{'showHistory'}
 					</Button>
 				</Box>
 			)

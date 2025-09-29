@@ -50,7 +50,7 @@ function DashboardCard({
 
 				{/* Сумма */}
 				<Typography variant='h5' fontWeight='bold' sx={{ mb: 1 }}>
-					Сумма: {formatNumber(value)} сум
+					{`${'amount'}: ${formatNumber(value)} ${'som'}`}
 				</Typography>
 
 				{/* Визиты */}
@@ -61,7 +61,7 @@ function DashboardCard({
 						color='text.secondary'
 						sx={{ mb: 1 }}
 					>
-						количество: {secondaryValue}
+						{`${'quantity'}: ${secondaryValue}`}
 					</Typography>
 				)}
 				{mounthCount !== undefined && (
@@ -71,7 +71,7 @@ function DashboardCard({
 						color='text.secondary'
 						sx={{ mb: 1 }}
 					>
-						количество покупок: {mounthCount}
+						{`${'number_of_purchases'}: ${mounthCount}`}
 					</Typography>
 				)}
 				{/* Подпись */}

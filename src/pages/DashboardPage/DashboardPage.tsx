@@ -78,13 +78,13 @@ const DashboardPage = () => {
 								<TableHead>
 									<TableRow>
 										<TableCell>
-											<Typography variant='h6'>category</Typography>
+											<Typography variant='h6'>{'category'}</Typography>
 										</TableCell>
 										<TableCell align='right'>
-											<Typography variant='h6'>howManyTimesArrived</Typography>
+											<Typography variant='h6'>{'howManyTimesArrived'}</Typography>
 										</TableCell>
 										<TableCell align='right'>
-											<Typography variant='h6'>totalSum</Typography>
+											<Typography variant='h6'>{'totalSum'}</Typography>
 										</TableCell>
 									</TableRow>
 								</TableHead>
@@ -92,7 +92,7 @@ const DashboardPage = () => {
 									{/* Итог */}
 									<TableRow>
 										<TableCell component='th' scope='row'>
-											<Typography variant='h6'>total</Typography>
+											<Typography variant='h6'>{'total'}</Typography>
 										</TableCell>
 										<TableCell align='right'>
 											<Typography variant='h6'>
@@ -116,7 +116,7 @@ const DashboardPage = () => {
 									{/* Автобусы */}
 									<TableRow>
 										<TableCell component='th' scope='row'>
-											<Typography>bus</Typography>
+											<Typography>{'bus'}</Typography>
 										</TableCell>
 										<TableCell align='right'>{result?.bus.count}</TableCell>
 										<TableCell align='right'>{result?.bus.sum}</TableCell>
@@ -125,7 +125,7 @@ const DashboardPage = () => {
 									{/* Другие */}
 									<TableRow>
 										<TableCell component='th' scope='row'>
-											<Typography>others</Typography>
+											<Typography>{'others'}</Typography>
 										</TableCell>
 										<TableCell align='right'>{result?.others.count}</TableCell>
 										<TableCell align='right'>{result?.others.sum}</TableCell>
@@ -134,7 +134,7 @@ const DashboardPage = () => {
 									{/* Работники */}
 									<TableRow>
 										<TableCell component='th' scope='row'>
-											<Typography>worker</Typography>
+											<Typography>{'worker'}</Typography>
 										</TableCell>
 										<TableCell align='right'>{result?.worker.count}</TableCell>
 										<TableCell align='right'>{result?.worker.sum}</TableCell>
@@ -143,7 +143,7 @@ const DashboardPage = () => {
 									{/* Арендаторы */}
 									<TableRow>
 										<TableCell component='th' scope='row'>
-											<Typography>tenant</Typography>
+											<Typography>{'tenant'}</Typography>
 										</TableCell>
 										<TableCell align='right'>{result?.tenant.count}</TableCell>
 										<TableCell align='right'>{result?.tenant.sum}</TableCell>
@@ -151,7 +151,7 @@ const DashboardPage = () => {
 									{/* Белый список */}
 									<TableRow>
 										<TableCell component='th' scope='row'>
-											<Typography>whiteList</Typography>
+											<Typography>{'whiteList'}</Typography>
 										</TableCell>
 										<TableCell align='right'>
 											{result?.whiteList.count}

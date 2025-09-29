@@ -1,7 +1,5 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from 'chart.js'
 import { Pie } from 'react-chartjs-2'
-
-import { Card } from '@mui/material'
 import { formatNumber } from '../../CarsSessions/view/function'
 import type { Result } from '../function/calculateForFreeMonth'
 
@@ -11,7 +9,7 @@ const DashboardPie = ({ resultMounthFree }: { resultMounthFree: Result }) => {
 	const totalSum = resultMounthFree.worker.sum + resultMounthFree.tenant.sum
 
 	const pieData = {
-		labels: ['Сотрудники', 'Арендаторы'],
+		labels: ['worker', 'tenant'],
 		color: '#fff',
 		datasets: [
 			{
@@ -32,7 +30,7 @@ const DashboardPie = ({ resultMounthFree }: { resultMounthFree: Result }) => {
 			title: {
 				display: true,
 				color: '#fff',
-				text: `Общий доход: ${formatNumber(totalSum)} сум`,
+				text: `${'dashboard'}: ${formatNumber(totalSum)} ${'som'}`,
 			},
 		},
 	}

@@ -9,7 +9,7 @@ export const tariffFields: TypedField[] = [
 			return (
 				<>
 					<Typography variant='body2' sx={{ textAlign: 'center' }}>
-						selectPeriodForNewTariff
+						{'selectPeriodForNewTariff'}
 					</Typography>
 				</>
 			)

@@ -29,7 +29,7 @@ const DashboardPieTime = ({
 	const totalHours = dataValues.reduce((acc, h) => acc + h, 0)
 
 	const pieData = {
-		labels: ['Пассажиры', 'Туристические', 'Сотрудники', 'Арендаторы'],
+		labels: ['others', 'bus', 'worker', 'tenant'],
 		datasets: [
 			{
 				data: dataValues,
@@ -52,7 +52,7 @@ const DashboardPieTime = ({
 			},
 			title: {
 				display: true,
-				text: `totalTime: ${totalHours} hour`,
+				text: `${'totalTime'}: ${totalHours} ${'hour'}`,
 				color: '#fff',
 				font: { size: 16 },
 			},
@@ -62,7 +62,7 @@ const DashboardPieTime = ({
 				callbacks: {
 					label: function (tooltipItem: any) {
 						const value = tooltipItem.raw
-						return `${tooltipItem.label}: ${value} hour`
+						return `${tooltipItem.label}: ${value} ${'hour'}`
 					},
 				},
 			},

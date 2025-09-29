@@ -35,9 +35,7 @@ const CarsSessions = () => {
 		fields: display_fields,
 		handler: async () => {
 			const ICarInfo = await getCars(1, 50, selectedRow.current?.plateNumber)
-
 			const cars: ICars[] = ICarInfo.items as ICars[]
-
 			const costInfo = await calculateFeeWithSubscriptions(
 				{
 					entryTime: selectedRow.current!.entryTime,
@@ -46,7 +44,6 @@ const CarsSessions = () => {
 				},
 				cars
 			)
-
 			return {
 				...selectedRow.current,
 				ICarInfo,
@@ -88,7 +85,6 @@ const CarsSessions = () => {
 					const start = new Date(yearStart, monthStart - 1, dayStart)
 					const [dayEnd, monthEnd, yearEnd] = endDate.split('/').map(Number)
 					const end = new Date(yearEnd, monthEnd - 1, dayEnd)
-
 					const next = pickDocuments(limit, offset)
 					const iterator = iterateDocuments({
 						createRequest: async ({ limit, page }) => {
@@ -131,7 +127,7 @@ const CarsSessions = () => {
 				onOperation={async (...args) => {
 					if (args[0] == 'delete') {
 						const confirm = await pickConfirm({
-							msg: 'После удаления истории, ее нельзя будет восстановить',
+							msg: 'cannot_restore_history',
 						}).toPromise()
 						if (!confirm) {
 							return

@@ -161,7 +161,7 @@ const Tariff = () => {
 									}}
 									variant='contained'
 								>
-									addTariff
+									{'addTariff'}
 								</Button>
 							</Box>
 							{groupedArray.map(tariff => (
@@ -202,7 +202,7 @@ const Tariff = () => {
 													updateDateOfTariff()
 												}}
 											>
-												editTariff
+												{'editTariff'}
 											</Button>
 											<Button
 												variant='outlined'
@@ -214,7 +214,7 @@ const Tariff = () => {
 													handleDeleteTariff()
 												}}
 											>
-												deleteTariff
+												{'deleteTariff'}
 											</Button>
 										</Box>
 									</Box>
@@ -232,7 +232,7 @@ const Tariff = () => {
 										>
 											<TableHead>
 												<TableRow>
-													<TableCell>allTypesCar</TableCell>
+													<TableCell>{'allTypesCar'}</TableCell>
 													{columns.map(col => (
 														<TableCell key={col} align='center'>
 															{col}
@@ -283,7 +283,9 @@ const Tariff = () => {
 																					updateTariffCostModal()
 																				}}
 																			>
-																				{displayValue}
+																				{typeof displayValue === 'number'
+																					? displayValue.toLocaleString()
+																					: displayValue}
 																			</Button>
 																		</TableCell>
 																	)
