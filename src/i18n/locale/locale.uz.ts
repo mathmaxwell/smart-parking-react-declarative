@@ -102,4 +102,5 @@ export const LOCALE: Record<string, string> = {
 	subscription_start: 'Obunaning boshlanishi',
 	subscription_end: 'Obunaning tugashi',
 	arrival: 'Kelish (Qaytib kelish)',
+	payment: "To'lov",
 }

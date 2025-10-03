@@ -1,8 +1,4 @@
-import type {
-	ICars,
-	ICarsInParking,
-	ICarsType,
-} from '../../../types/CarsInParking'
+import type { ICars, ICarsType } from '../../../types/CarsInParking'
 import * as XLSX from 'xlsx'
 export interface ISessionData {
 	entryTime: string
@@ -88,69 +84,6 @@ function calculateCostFromLocalStorage(subscriptionEnd?: Date): number {
 	}
 }
 
-export function calculateSessionCost(
-	session: {
-		entryTime: Date | string
-		exitTime: Date | string
-		isBus: boolean
-	},
-	subscriptions: ICars[]
-): number {
-	const entry = new Date(session.entryTime)
-	const exit = new Date(session.exitTime)
-
-	// если приехал позже выезда (ошибка)
-	if (exit <= entry) return 0
-
-	// исходный интервал
-	let paidIntervals: [Date, Date][] = [[entry, exit]]
-
-	// вычитаем каждую подписку
-	for (const sub of subscriptions) {
-		const subStart = new Date(sub.start_Date)
-		const subEnd = new Date(sub.end_Date)
-
-		let newIntervals: [Date, Date][] = []
-		for (const [pStart, pEnd] of paidIntervals) {
-			// нет пересечения
-			if (subEnd <= pStart || subStart >= pEnd) {
-				newIntervals.push([pStart, pEnd])
-				continue
-			}
-			// слева остаётся платный кусок
-			if (subStart > pStart) {
-				newIntervals.push([pStart, subStart])
-			}
-			// справа остаётся платный кусок
-			if (subEnd < pEnd) {
-				newIntervals.push([subEnd, pEnd])
-			}
-		}
-		paidIntervals = newIntervals
-	}
-
-	// считаем общее платное время
-	let totalHours = 0
-	for (const [pStart, pEnd] of paidIntervals) {
-		const diffMs = pEnd.getTime() - pStart.getTime()
-		if (diffMs > 0) {
-			totalHours += diffMs / (1000 * 60 * 60)
-		}
-	}
-
-	// округляем в большую сторону
-	const hours = Math.ceil(totalHours)
-
-	if (hours <= 0) return 0
-
-	// тариф
-	if (session.isBus) {
-		return hours <= 2 ? 25_000 : 25_000 + (hours - 2) * 25_000
-	} else {
-		return hours * 5_000
-	}
-}
-
 export function mergeDateTime(
 	dateStr?: string,
 	timeStr?: string
@@ -172,56 +105,45 @@ export function mergeDateTime(
 	return date
 }
 
-function mapSession(session: ICarsInParking) {
-	return {
-		plateNumber: session.plateNumber,
-		bus: session.isBus,
-		entryTime: session.entryTime.toString().slice(0, 16),
-		exitTime: session.exitTime.toString().slice(0, 16),
-		// entryPhoto: session.entryPhoto
-		// 	? pb.files.getURL(session, session.entryPhoto)
-		// 	: '',
-		// exitPhoto: session.exitPhoto
-		// 	? pb.files.getURL(session, session.exitPhoto)
-		// 	: '',
-	}
-}
 function mapCars(session: ICars) {
+	const lang = localStorage.getItem('lang') || 'ru'
+
+	const labels: any = {
+		plateNumber: {
+			ru: 'Номер машины',
+			uz: 'Mashina raqami',
+			eng: 'Plate Number',
+		},
+		subStartDate: {
+			ru: 'Дата начала подписки',
+			eng: 'Subscription start date',
+			uz: 'Obuna boshlangan sana',
+		},
+		subEndDate: {
+			ru: 'Дата окончания подписки',
+			uz: 'Obuna tugash sanasi',
+			eng: 'Subscription End Date',
+		},
+		ownerName: {
+			ru: 'Название компании',
+			eng: 'Company name',
+			uz: 'Kompaniya nomi',
+		},
+	}
 	return {
-		plateNumber: session.plateNumber,
-		'имя владелца': session.ownerName || '-',
-		startTime: session.start_Date.toString().slice(0, 16),
-		endTime: session.end_Date.toString().slice(0, 16),
+		[labels.plateNumber[lang]]: session.plateNumber,
+		[labels.ownerName[lang]]: session.ownerName || '-',
+		[labels.subStartDate[lang]]: new Date(session.start_Date)
+			.toLocaleString()
+			.slice(0, 17),
+		[labels.subEndDate[lang]]: new Date(session.end_Date)
+			.toLocaleString()
+			.slice(0, 17),
 	}
 }
 
-export function downloadSessionsXLSX(
-	sessions: ICarsInParking[],
-	filename = 'sessions.xlsx'
-) {
-	if (!sessions || sessions.length === 0) return
-
-	const filtered = sessions.map(mapSession)
-
-	const ws = XLSX.utils.json_to_sheet(filtered)
-	const wb = XLSX.utils.book_new()
-	XLSX.utils.book_append_sheet(wb, ws, 'Sessions')
-
-	const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' })
-	const blob = new Blob([wbout], {
-		type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-	})
-
-	const url = URL.createObjectURL(blob)
-	const a = document.createElement('a')
-	a.href = url
-	a.download = filename
-	a.click()
-	URL.revokeObjectURL(url)
-}
 export function downloadCarsXLSX(sessions: ICars[], filename = 'cars.xlsx') {
 	if (!sessions || sessions.length === 0) return
-
 	const filtered = sessions.map(mapCars)
 
 	const ws = XLSX.utils.json_to_sheet(filtered)

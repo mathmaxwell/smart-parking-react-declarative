@@ -17,8 +17,12 @@ import {
 } from '../../api/carsSessions'
 import { useState } from 'react'
 import { columns, display_fields, filters, operations } from './view/Fields'
-import { downloadSessionsXLSX, mergeDateTime } from './view/function'
-import { calculateFeeWithSubscriptions } from '../DashboardPage/function/calculateDashboard'
+import { mergeDateTime } from './view/function'
+
+import {
+	calculateFeeWithSubscriptions,
+	downloadSessionsXLSX,
+} from '../DashboardPage/function/calculateDashboard'
 const CarsSessions = () => {
 	const [selectedRow, setSelectedRow] = useActualRef<ICarsInParking | null>(
 		null
@@ -140,7 +144,7 @@ const CarsSessions = () => {
 						window.location.reload()
 						setSelectedRows([])
 					} else if (args[0] == 'download') {
-						downloadSessionsXLSX(args[1])
+						await downloadSessionsXLSX(args[1])
 					}
 				}}
 			/>

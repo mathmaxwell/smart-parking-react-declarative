@@ -99,6 +99,6 @@ export const LOCALE: Record<string, string> = {
 	subscription_start: 'Начало подписки',
 	subscription_end: 'Конец подписки',
 	arrival: 'Прибытия',
-	
+	payment: 'Оплата',
 }
 

@@ -31,7 +31,7 @@ export const Content = ({
 	cords = [],
 	naturalHeight = 100,
 	naturalWidth = 100,
-	onChange = cords => console.log({ cords }),
+	onChange = () => {},
 	onClick,
 	onHover,
 }: IContentProps) => {

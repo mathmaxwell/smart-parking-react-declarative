@@ -8,7 +8,7 @@ import {
 import { Box, Card, CardContent, Typography } from '@mui/material'
 import type { DashboardResult } from '../../types/CarsInParking'
 
-function getMaxByCount(result: DashboardResult) {
+export function getMaxByCount(result: DashboardResult) {
 	const [name, values] = Object.entries(result).reduce((max, current) =>
 		current[1].count > max[1].count ? current : max
 	)

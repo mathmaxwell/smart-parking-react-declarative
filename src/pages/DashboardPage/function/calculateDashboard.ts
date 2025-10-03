@@ -1,11 +1,74 @@
 import { getMomentStamp, getTimeStamp } from 'get-moment-stamp'
+import * as XLSX from 'xlsx'
 import { getCarGroup, getCars, getCarsByType } from '../../../api/carsSessions'
 import type {
 	ICarGroup,
 	ICars,
 	ICarsInParking,
 } from '../../../types/CarsInParking'
-import { calculateSessionCost } from '../../CarsSessions/view/function'
+import { getMaxByCount } from '../../HistoryPage/HistoryPage'
+// export function calculateSessionCost(
+// 	session: {
+// 		entryTime: Date | string
+// 		exitTime: Date | string
+// 		isBus: boolean
+// 	},
+// 	subscriptions: ICars[]
+// ): number {
+// 	const entry = new Date(session.entryTime)
+// 	const exit = new Date(session.exitTime)
+
+// 	// если приехал позже выезда (ошибка)
+// 	if (exit <= entry) return 0
+
+// 	// исходный интервал
+// 	let paidIntervals: [Date, Date][] = [[entry, exit]]
+
+// 	// вычитаем каждую подписку
+// 	for (const sub of subscriptions) {
+// 		const subStart = new Date(sub.start_Date)
+// 		const subEnd = new Date(sub.end_Date)
+
+// 		let newIntervals: [Date, Date][] = []
+// 		for (const [pStart, pEnd] of paidIntervals) {
+// 			// нет пересечения
+// 			if (subEnd <= pStart || subStart >= pEnd) {
+// 				newIntervals.push([pStart, pEnd])
+// 				continue
+// 			}
+// 			// слева остаётся платный кусок
+// 			if (subStart > pStart) {
+// 				newIntervals.push([pStart, subStart])
+// 			}
+// 			// справа остаётся платный кусок
+// 			if (subEnd < pEnd) {
+// 				newIntervals.push([subEnd, pEnd])
+// 			}
+// 		}
+// 		paidIntervals = newIntervals
+// 	}
+
+// 	// считаем общее платное время
+// 	let totalHours = 0
+// 	for (const [pStart, pEnd] of paidIntervals) {
+// 		const diffMs = pEnd.getTime() - pStart.getTime()
+// 		if (diffMs > 0) {
+// 			totalHours += diffMs / (1000 * 60 * 60)
+// 		}
+// 	}
+
+// 	// округляем в большую сторону
+// 	const hours = Math.ceil(totalHours)
+
+// 	if (hours <= 0) return 0
+
+// 	// тариф
+// 	if (session.isBus) {
+// 		return hours <= 2 ? 25_000 : 25_000 + (hours - 2) * 25_000
+// 	} else {
+// 		return hours * 5_000
+// 	}
+// }
 
 export type DashboardResult = {
 	count: number
@@ -15,13 +78,26 @@ export type DashboardResult = {
 	totalDuration: number // в минутах
 	avgDuration: number // в минутах
 }
-
-type GroupStats = {
-	count: number
-	sum: number
-	cars: Set<string>
-	totalDuration: number
+export interface ISubscriptionPurchase {
+	plateNumber: string
+	startDay: number
+	endDay: number
+	type: 'day' | 'month'
+	price: number
+	tariffId: string
 }
+
+export interface ISubscriptionsResult {
+	total: number
+	purchases: ISubscriptionPurchase[]
+}
+
+// type GroupStats = {
+// 	count: number
+// 	sum: number
+// 	cars: Set<string>
+// 	totalDuration: number
+// }
 let cachedTariffs: ICarGroup[] | null = null
 let cachePromise: Promise<ICarGroup[]> | null = null
 
@@ -45,85 +121,85 @@ export async function getTariffOfLocal() {
 	return cachePromise
 }
 
-export async function calculateDashboard(dashboard: ICarsInParking[]) {
-	const groups: Record<
-		'other' | 'bus' | 'whiteList' | 'worker' | 'tenant',
-		GroupStats
-	> = {
-		other: { count: 0, sum: 0, cars: new Set(), totalDuration: 0 },
-		bus: { count: 0, sum: 0, cars: new Set(), totalDuration: 0 },
-		whiteList: { count: 0, sum: 0, cars: new Set(), totalDuration: 0 },
-		worker: { count: 0, sum: 0, cars: new Set(), totalDuration: 0 },
-		tenant: { count: 0, sum: 0, cars: new Set(), totalDuration: 0 },
-	}
+// export async function calculateDashboard(dashboard: ICarsInParking[]) {
+// 	const groups: Record<
+// 		'other' | 'bus' | 'whiteList' | 'worker' | 'tenant',
+// 		GroupStats
+// 	> = {
+// 		other: { count: 0, sum: 0, cars: new Set(), totalDuration: 0 },
+// 		bus: { count: 0, sum: 0, cars: new Set(), totalDuration: 0 },
+// 		whiteList: { count: 0, sum: 0, cars: new Set(), totalDuration: 0 },
+// 		worker: { count: 0, sum: 0, cars: new Set(), totalDuration: 0 },
+// 		tenant: { count: 0, sum: 0, cars: new Set(), totalDuration: 0 },
+// 	}
 
-	// объект для подсчета по часам
-	const arrivalsByHour: Record<string, number> = {}
-	for (let h = 0; h < 24; h++) arrivalsByHour[h.toString().padStart(2, '0')] = 0
+// 	// объект для подсчета по часам
+// 	const arrivalsByHour: Record<string, number> = {}
+// 	for (let h = 0; h < 24; h++) arrivalsByHour[h.toString().padStart(2, '0')] = 0
 
-	const results = await Promise.all(
-		dashboard.map(async car => {
-			// определяем час въезда
-			const enterHour = Math.floor(car.enterMomentStamp / 60) // если есть entryMomentStamp
-			const hourKey = enterHour.toString().padStart(2, '0')
-			arrivalsByHour[hourKey]++
+// 	const results = await Promise.all(
+// 		dashboard.map(async car => {
+// 			// определяем час въезда
+// 			const enterHour = Math.floor(car.enterMomentStamp / 60) // если есть entryMomentStamp
+// 			const hourKey = enterHour.toString().padStart(2, '0')
+// 			arrivalsByHour[hourKey]++
 
-			const result = await getCarsByType('', '', car.plateNumber)
-			const cost = calculateSessionCost(
-				{
-					entryTime: car.entryTime,
-					exitTime: car.exitTime,
-					isBus: car.isBus,
-				},
-				result
-			)
+// 			const result = await getCarsByType('', '', car.plateNumber)
+// 			const cost = calculateSessionCost(
+// 				{
+// 					entryTime: car.entryTime,
+// 					exitTime: car.exitTime,
+// 					isBus: car.isBus,
+// 				},
+// 				result
+// 			)
 
-			const duration =
-				(new Date(car.exitTime).getTime() - new Date(car.entryTime).getTime()) /
-				1000 /
-				60
+// 			const duration =
+// 				(new Date(car.exitTime).getTime() - new Date(car.entryTime).getTime()) /
+// 				1000 /
+// 				60
 
-			let group: keyof typeof groups = 'other'
-			if (result.length === 0) {
-				group = car.isBus ? 'bus' : 'other'
-			} else {
-				const type = result[0].expand?.type?.display_name
-				if (type === 'whiteList' || type === 'worker' || type === 'tenant') {
-					group = type
-				} else {
-					group = car.isBus ? 'bus' : 'other'
-				}
-			}
+// 			let group: keyof typeof groups = 'other'
+// 			if (result.length === 0) {
+// 				group = car.isBus ? 'bus' : 'other'
+// 			} else {
+// 				const type = result[0].expand?.type?.display_name
+// 				if (type === 'whiteList' || type === 'worker' || type === 'tenant') {
+// 					group = type
+// 				} else {
+// 					group = car.isBus ? 'bus' : 'other'
+// 				}
+// 			}
 
-			return { car, cost, duration, group }
-		})
-	)
+// 			return { car, cost, duration, group }
+// 		})
+// 	)
 
-	for (let { car, cost, duration, group } of results) {
-		groups[group].count++
-		groups[group].sum += cost
-		groups[group].cars.add(car.plateNumber)
-		groups[group].totalDuration += duration
-	}
+// 	for (let { car, cost, duration, group } of results) {
+// 		groups[group].count++
+// 		groups[group].sum += cost
+// 		groups[group].cars.add(car.plateNumber)
+// 		groups[group].totalDuration += duration
+// 	}
 
-	const format = (g: GroupStats): DashboardResult => ({
-		count: g.count,
-		sum: g.sum,
-		uniqueCars: g.cars.size,
-		avgCost: g.count ? g.sum / g.count : 0,
-		totalDuration: Math.round(g.totalDuration),
-		avgDuration: g.count ? Math.round(g.totalDuration / g.count) : 0,
-	})
+// 	const format = (g: GroupStats): DashboardResult => ({
+// 		count: g.count,
+// 		sum: g.sum,
+// 		uniqueCars: g.cars.size,
+// 		avgCost: g.count ? g.sum / g.count : 0,
+// 		totalDuration: Math.round(g.totalDuration),
+// 		avgDuration: g.count ? Math.round(g.totalDuration / g.count) : 0,
+// 	})
 
-	return {
-		other: format(groups.other),
-		bus: format(groups.bus),
-		whiteList: format(groups.whiteList),
-		worker: format(groups.worker),
-		tenant: format(groups.tenant),
-		arrivalsByHour, // вот это новое поле
-	}
-}
+// 	return {
+// 		other: format(groups.other),
+// 		bus: format(groups.bus),
+// 		whiteList: format(groups.whiteList),
+// 		worker: format(groups.worker),
+// 		tenant: format(groups.tenant),
+// 		arrivalsByHour, // вот это новое поле
+// 	}
+// }
 
 export async function findSubscription(
 	subscriptions: ICars[] | undefined,
@@ -133,11 +209,9 @@ export async function findSubscription(
 	safeExitTime: number,
 	isBus: boolean
 ) {
-	// Рассчитываем абсолютное время въезда и выезда в минутах (от 1970 года)
 	const sessionStart = startDay * 24 * 60 + safeEntryTime
 	const sessionEnd = endDay * 24 * 60 + safeExitTime
 
-	// Проверка корректности интервала
 	if (sessionEnd < sessionStart) {
 		return {
 			isSubscription: false,
@@ -147,7 +221,6 @@ export async function findSubscription(
 		}
 	}
 
-	// Если подписок нет или массив пустой, считаем платное время
 	if (!subscriptions || subscriptions.length === 0) {
 		const minutes = sessionEnd - sessionStart
 		const hours = minutes <= 60 ? 1 : Math.ceil(minutes / 60)
@@ -159,12 +232,10 @@ export async function findSubscription(
 		}
 	}
 
-	// Ищем подписку, полностью покрывающую сессию
 	for (const sub of subscriptions) {
 		const subStart = sub.startMomentStampDay * 24 * 60 + sub.startMomentStamp
 		const subEnd = sub.endMomentStampDay * 24 * 60 + sub.endMomentStamp
 
-		// Подписка покрывает всю сессию
 		if (subStart <= sessionStart && subEnd >= sessionEnd) {
 			const name = await getCarsByType(sub.type)
 
@@ -176,22 +247,20 @@ export async function findSubscription(
 				minutes: 0,
 				hours: 0,
 				display_name,
+				subscriptionEndDay: sub.end_Date, // 👈 добавили дату окончания подписки
 			}
 		}
 
 		if (subEnd > sessionStart && subStart < sessionEnd) {
-			// вариант 1: если подписка начинается позже въезда
 			let paidStart = sessionStart
 			let paidEnd = sessionEnd
 
 			if (subStart > sessionStart) {
-				// кусок до начала подписки платный
 				paidStart = sessionStart
 				paidEnd = Math.min(subStart, sessionEnd)
 			}
 
 			if (subEnd < sessionEnd) {
-				// кусок после окончания подписки платный
 				paidStart = Math.max(subEnd, sessionStart)
 				paidEnd = sessionEnd
 			}
@@ -207,12 +276,11 @@ export async function findSubscription(
 				minutes,
 				hours,
 				display_name,
+				subscriptionEndDay: sub.end_Date, // 👈 тоже добавили
 			}
 		}
 	}
 
-	// Если подписка не покрывает полностью, считаем платное время
-	// Частичное покрытие обрабатывается в calculateFeeWithSubscriptions
 	const minutes = sessionEnd - sessionStart
 	const hours = minutes <= 60 ? 1 : Math.ceil(minutes / 60)
 	return {
@@ -576,19 +644,6 @@ export async function processDashboard(dashboard: ICarsInParking[]) {
 
 	return stats
 }
-export interface ISubscriptionPurchase {
-	plateNumber: string
-	startDay: number
-	endDay: number
-	type: 'day' | 'month'
-	price: number
-	tariffId: string
-}
-
-export interface ISubscriptionsResult {
-	total: number
-	purchases: ISubscriptionPurchase[]
-}
 
 export async function calculateSubscriptionsCost({
 	plateNumber,
@@ -638,4 +693,127 @@ export async function calculateSubscriptionsCost({
 	const total = result.reduce((sum, r) => sum + r.price, 0)
 
 	return { total, purchases: result }
+}
+async function mapSession(session: ICarsInParking) {
+	const lang = localStorage.getItem('lang') || 'ru'
+	const locale = lang === 'eng' ? 'en' : lang
+	let result = await processDashboard([session])
+	let big = getMaxByCount(result)
+	const typeData = await getCarsByType('', '', session.plateNumber)
+	const subs = await findSubscription(
+		typeData,
+		session.enterMomentStampDay,
+		session.exitMomentStampDay,
+		session.enterMomentStamp,
+		session.exitMomentStamp,
+		session.isBus
+	)
+	let subEndDate
+	if (subs.subscriptionEndDay === undefined) {
+		subEndDate = '-'
+	} else {
+		subEndDate = new Date(subs.subscriptionEndDay).toLocaleString(locale)
+	}
+	const yesNo: any = {
+		ru: ['нет', 'да'],
+		eng: ['no', 'yes'],
+		uz: ["yo'q", 'ha'],
+	}
+	const labels: any = {
+		plateNumber: {
+			ru: 'Номер машины',
+			uz: 'Mashina raqami',
+			eng: 'Plate Number',
+		},
+		isBus: {
+			ru: 'Автобус',
+			uz: 'Avtobus',
+			eng: 'Is Bus',
+		},
+		entryTime: {
+			ru: 'Время въезда',
+			uz: 'Kirish vaqti',
+			eng: 'Entry Time',
+		},
+		exitTime: {
+			ru: 'Время выезда',
+			uz: 'Chiqish vaqti',
+			eng: 'Exit Time',
+		},
+		category: {
+			ru: 'Категория',
+			uz: 'Kategoriya',
+			eng: 'Category',
+		},
+		payment: {
+			ru: 'Оплата',
+			uz: "To'lov",
+			eng: 'Payment',
+		},
+		subEndDate: {
+			ru: 'Дата окончания подписки',
+			uz: 'Obuna tugash sanasi',
+			eng: 'Subscription End Date',
+		},
+		others: {
+			ru: 'Пассажиры (сопровождающие/встречающие)',
+			uz: 'Yo‘lovchilar (kuzatuvchi/kutib oluvchi)',
+			eng: 'Passengers (accompanying/meeting)',
+		},
+		bus: {
+			ru: 'Туристические автобусы, микроавтобусы, минивэны',
+			uz: 'Turistik avtobuslar, mikroavtobuslar, minivenlar',
+			eng: 'Tourist buses, minibuses, minivans',
+		},
+		worker: {
+			ru: 'Работники (абонемент)',
+			uz: 'Hodimlar (abonement)',
+			eng: 'Workers (subscription)',
+		},
+		tenant: {
+			ru: 'Арендаторы и другие организации (абонемент)',
+			uz: 'Ijarachilar va boshqa tashkilotlar (abonement)',
+			eng: 'Tenants and other organizations (subscription)',
+		},
+		whiteList: {
+			ru: 'белый список',
+			uz: `oq ro'yxat`,
+			eng: 'white list',
+		},
+	}
+
+	return {
+		[labels.plateNumber[lang]]: session.plateNumber,
+		[labels.isBus[lang]]: yesNo[lang][session.isBus ? 1 : 0],
+		[labels.entryTime[lang]]: new Date(session.entryTime)
+			.toLocaleString(locale)
+			.slice(0, 16),
+		[labels.exitTime[lang]]: new Date(session.exitTime)
+			.toLocaleString(locale)
+			.slice(0, 16),
+		[labels.category[lang]]: labels[big.name][lang],
+		[labels.payment[lang]]: big.sum,
+		[labels.subEndDate[lang]]: subEndDate,
+	}
+}
+
+export async function downloadSessionsXLSX(
+	sessions: ICarsInParking[],
+	filename = 'sessions.xlsx'
+) {
+	if (!sessions || sessions.length === 0) return
+	const filtered = await Promise.all(sessions.map(mapSession))
+	const ws = XLSX.utils.json_to_sheet(filtered)
+	const wb = XLSX.utils.book_new()
+	XLSX.utils.book_append_sheet(wb, ws, 'Sessions')
+	const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' })
+	const blob = new Blob([wbout], {
+		type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+	})
+	const url = URL.createObjectURL(blob)
+	const a = document.createElement('a')
+	a.href = url
+	a.download = filename
+	a.click()
+	URL.revokeObjectURL(url)
 }

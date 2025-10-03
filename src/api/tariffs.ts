@@ -113,7 +113,7 @@ export async function updateTariff(startOfDay: Date, endOfDay: Date) {
 					first2hours: car.first2hours,
 					first10Minutes: car.first10Minutes,
 				}
-				console.log('updates', updates)
+
 
 				return pb.collection('car_groups').update(car.id, updates)
 			})

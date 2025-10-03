@@ -397,7 +397,6 @@ export const operations: IListOperation[] = [
 		action: 'delete',
 		label: 'delete',
 		isAvailable: async row => {
-			console.log(row)
 			return true
 		},
 	},
