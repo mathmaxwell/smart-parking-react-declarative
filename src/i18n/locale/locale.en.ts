@@ -98,5 +98,8 @@ export const LOCALE: Record<string, string> = {
 	subscription_end: 'Subscription end',
 	arrival: 'Arrivals',
 	payment: 'Payment',
+	information: 'Information',
+	parking_visit: 'Parking visit',
+	show_information: 'Show information',
 	
 }

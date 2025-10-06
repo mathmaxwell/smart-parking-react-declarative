@@ -18,22 +18,22 @@ export const routes: IRouteItem[] = [
 		sideMenu: 'root.example_pages.cars_sessions',
 		redirect: '/cars_sessions',
 	},
-	{
-		path: '/cars_sessions',
-		sideMenu: 'root.example_pages.cars_sessions',
-		element: CarsSessions,
-	},
+
 	{
 		path: '/cars_sessions/:plateNumber',
 		sideMenu: 'root.example_pages.cars_sessions',
 		element: HistoryPage,
 	},
 	{
+		path: '/cars_sessions',
+		sideMenu: 'root.example_pages.cars_sessions',
+		element: CarsSessions,
+	},
+	{
 		path: '/dashboard',
 		sideMenu: 'root.example_pages.dashboard',
 		element: DashboardPage,
 	},
-
 	{
 		path: '/tariffs',
 		sideMenu: 'root.example_pages.tariffs',

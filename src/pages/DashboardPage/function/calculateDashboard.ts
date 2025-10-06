@@ -787,10 +787,10 @@ async function mapSession(session: ICarsInParking) {
 		[labels.isBus[lang]]: yesNo[lang][session.isBus ? 1 : 0],
 		[labels.entryTime[lang]]: new Date(session.entryTime)
 			.toLocaleString(locale)
-			.slice(0, 16),
+			.slice(0, 17),
 		[labels.exitTime[lang]]: new Date(session.exitTime)
 			.toLocaleString(locale)
-			.slice(0, 16),
+			.slice(0, 17),
 		[labels.category[lang]]: labels[big.name][lang],
 		[labels.payment[lang]]: big.sum,
 		[labels.subEndDate[lang]]: subEndDate,

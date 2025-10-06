@@ -25,10 +25,9 @@ export const header: TypedField[] = [
 					}}
 				>
 					<UndoIcon />
-					{'back'}
 				</IconButton>
 				<Typography variant='h5' component='h2' sx={{ fontWeight: 600 }}>
-					{'history'}
+					{'information'}
 				</Typography>
 			</Box>
 		),

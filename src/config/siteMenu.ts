@@ -1,10 +1,10 @@
 import type { IScaffold2Group } from 'react-declarative'
 import TaxiAlertIcon from '@mui/icons-material/TaxiAlert'
 import PublicIcon from '@mui/icons-material/Public'
-import HomeIcon from '@mui/icons-material/Home'
 import PaidIcon from '@mui/icons-material/Paid'
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera'
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn'
 export const sidemenu: IScaffold2Group[] = [
 	{
 		id: 'example_pages',
@@ -12,14 +12,14 @@ export const sidemenu: IScaffold2Group[] = [
 		noHeader: true,
 		children: [
 			{
-				label: 'dashboard',
-				id: 'dashboard',
-				icon: HomeIcon,
-			},
-			{
-				label: 'Records',
+				label: 'parking_visit',
 				id: 'cars_sessions',
 				icon: TaxiAlertIcon,
+			},
+			{
+				label: 'dashboard',
+				id: 'dashboard',
+				icon: MonetizationOnIcon,
 			},
 
 			{

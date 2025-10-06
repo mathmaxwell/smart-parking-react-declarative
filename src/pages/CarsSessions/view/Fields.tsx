@@ -297,7 +297,7 @@ export const columns: IColumn<{}, ICarsInParking>[] = [
 	},
 	{
 		type: ColumnType.Component,
-		headerName: 'time',
+		headerName: 'totalTime',
 		element: session => {
 			return (
 				<Box
@@ -321,7 +321,7 @@ export const columns: IColumn<{}, ICarsInParking>[] = [
 	},
 	{
 		type: ColumnType.Component,
-		headerName: 'history',
+		headerName: 'information',
 		element: session => {
 			return (
 				<Box
@@ -341,7 +341,7 @@ export const columns: IColumn<{}, ICarsInParking>[] = [
 							window.location.reload()
 						}}
 					>
-						{'showHistory'}
+						{'show_information'}
 					</Button>
 				</Box>
 			)
