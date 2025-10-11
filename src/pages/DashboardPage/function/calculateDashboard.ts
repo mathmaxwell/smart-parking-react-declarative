@@ -351,7 +351,6 @@ export function calculateFee(
 		) {
 			let cost = 0
 			const minutes = info.minutes
-
 			// --- первые 10 минут ---
 			if (minutes <= 10) {
 				if (tarif.first10Minutes === -1) {
@@ -430,9 +429,30 @@ export function calculateFee(
 
 			return { display_name: 'others', cost }
 		} else {
+			let cost = 0
+			const hours = info.hours
+
+			// если больше 5 часов — считаем как день
+			if (hours > 5) {
+				const days = Math.floor(hours / 24)
+				const remainingHours = hours % 24
+
+				cost += days * tarif.day
+
+				// если остаток меньше 5 часов — добавляем по часам
+				// если остаток больше 5 — это ещё один день
+				if (remainingHours > 5) {
+					cost += tarif.day
+				} else if (remainingHours > 0) {
+					cost += tarif.hour * remainingHours
+				}
+			} else {
+				cost = tarif.hour * hours
+			}
+
 			return {
-				display_name: 'others',
-				cost: tarif.hour * info.hours,
+				display_name: 'bus',
+				cost,
 			}
 		}
 	}
@@ -624,7 +644,6 @@ export async function processDashboard(dashboard: ICarsInParking[]) {
 
 	for (const car of dashboard) {
 		const typeData = await getCarsByType('', '', car.plateNumber)
-
 		const fee = await calculateFeeWithSubscriptions(
 			{
 				entryTime: car.entryTime,
